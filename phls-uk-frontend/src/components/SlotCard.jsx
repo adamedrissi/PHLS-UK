@@ -14,6 +14,9 @@ function formatTime(dateTimeString) {
 }
 
 function SlotCard({ slot }) {
+  const role = localStorage.getItem("phlsRole") || "GUEST";
+  const showBookButton = role === "PATIENT";
+
   return (
     <div
       style={{
@@ -27,7 +30,6 @@ function SlotCard({ slot }) {
       }}
     >
       <h3 style={{ marginTop: 0 }}>{slot.providerName}</h3>
-
       <p><strong>Clinic:</strong> {slot.clinicName}</p>
       <p><strong>City:</strong> {slot.city}</p>
       <p><strong>Postcode:</strong> {slot.postcode}</p>
@@ -37,14 +39,18 @@ function SlotCard({ slot }) {
         <strong>Specialties:</strong>{" "}
         {slot.specialties?.length ? slot.specialties.join(", ") : "Not listed"}
       </p>
-      <p>
-        <strong>Date:</strong> {formatDate(slot.startTime)}
-      </p>
+      <p><strong>Date:</strong> {formatDate(slot.startTime)}</p>
       <p>
         <strong>Time:</strong> {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
       </p>
 
-      <button>Book</button>
+      {showBookButton ? (
+        <button>Book</button>
+      ) : (
+        <p style={{ fontStyle: "italic", color: "#666" }}>
+          Log in as a patient to book this appointment.
+        </p>
+      )}
     </div>
   );
 }

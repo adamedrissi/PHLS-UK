@@ -1,5 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  loginUser,
+  registerPatient,
+  registerProvider,
+} from "../services/authService";
 import en from '../assets/en.png';
 import cy from '../assets/cy.png';
 import es from '../assets/es.png';
@@ -18,46 +23,104 @@ function LoginRegisterPage() {
 
   const [loginForm, setLoginForm] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   const [registerForm, setRegisterForm] = useState({
     fullName: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    phoneNumber: "",
+    clinicId: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("phlsToken");
+    if (token) {
+      navigate("/home");
+    }
+  }, [navigate]);
+
   function handleGuestEntry() {
+    localStorage.removeItem("phlsToken");
+    localStorage.removeItem("phlsUserId");
     localStorage.setItem("phlsRole", "GUEST");
+    localStorage.setItem("phlsLoggedIn", "false");
     navigate("/home");
   }
 
-  function handleLoginSubmit(e) {
+  async function handleLoginSubmit(e) {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    console.log("Login form:", { ...loginForm, userType });
+    try {
+      const data = await loginUser({
+        email: loginForm.email,
+        password: loginForm.password,
+      });
 
-    localStorage.setItem("phlsRole", userType);
-    localStorage.setItem("phlsLoggedIn", "true");
+      localStorage.setItem("phlsToken", data.token);
+      localStorage.setItem("phlsRole", data.role);
+      localStorage.setItem("phlsUserId", String(data.userId));
+      localStorage.setItem("phlsLoggedIn", "true");
 
-    navigate("/home");
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleRegisterSubmit(e) {
+  async function handleRegisterSubmit(e) {
     e.preventDefault();
+    setError("");
 
     if (registerForm.password !== registerForm.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
-    console.log("Register form:", { ...registerForm, userType });
+    setLoading(true);
 
-    localStorage.setItem("phlsRole", userType);
-    localStorage.setItem("phlsLoggedIn", "true");
+    try {
+      if (userType === "PATIENT") {
+        await registerPatient({
+          email: registerForm.email,
+          password: registerForm.password,
+          fullName: registerForm.fullName,
+          phoneNumber: registerForm.phoneNumber,
+        });
+      } else {
+        await registerProvider({
+          email: registerForm.email,
+          password: registerForm.password,
+          fullName: registerForm.fullName,
+          clinicId: Number(registerForm.clinicId),
+        });
+      }
 
-    navigate("/home");
+      const loginData = await loginUser({
+        email: registerForm.email,
+        password: registerForm.password,
+      });
+
+      localStorage.setItem("phlsToken", loginData.token);
+      localStorage.setItem("phlsRole", loginData.role);
+      localStorage.setItem("phlsUserId", String(loginData.userId));
+      localStorage.setItem("phlsLoggedIn", "true");
+
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -66,7 +129,7 @@ function LoginRegisterPage() {
         minHeight: "100vh",
         backgroundColor: "#cfe8f3",
         padding: "32px",
-        color: "#0b2c6b"
+        color: "#0b2c6b",
       }}
     >
       <h1 style={{ fontSize: "3rem", marginBottom: "24px", color: "#000" }}>
@@ -81,7 +144,7 @@ function LoginRegisterPage() {
             color: "white",
             border: "none",
             padding: "12px 20px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           LOGIN
@@ -94,7 +157,7 @@ function LoginRegisterPage() {
             color: "white",
             border: "none",
             padding: "12px 20px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           REGISTER
@@ -111,7 +174,7 @@ function LoginRegisterPage() {
               color: userType === "PATIENT" ? "white" : "black",
               border: "none",
               padding: "10px 18px",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
           >
             PATIENT
@@ -124,7 +187,7 @@ function LoginRegisterPage() {
               color: userType === "PROVIDER" ? "white" : "black",
               border: "none",
               padding: "10px 18px",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
           >
             PROVIDER
@@ -138,13 +201,19 @@ function LoginRegisterPage() {
           backgroundColor: "#d9e5f0",
           padding: "24px",
           borderRadius: "8px",
-          border: "1px solid #999"
+          border: "1px solid #999",
         }}
       >
+        {error && (
+          <p style={{ color: "red", marginTop: 0, marginBottom: "16px" }}>
+            {error}
+          </p>
+        )}
+
         {mode === "login" ? (
           <form onSubmit={handleLoginSubmit}>
             <label style={{ display: "block", marginBottom: "8px" }}>
-              Username / Email
+              Email
             </label>
             <input
               type="email"
@@ -154,6 +223,7 @@ function LoginRegisterPage() {
               }
               placeholder="Enter Email Address..."
               style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+              required
             />
 
             <label style={{ display: "block", marginBottom: "8px" }}>
@@ -167,19 +237,21 @@ function LoginRegisterPage() {
               }
               placeholder="Enter Password..."
               style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+              required
             />
 
             <button
               type="submit"
+              disabled={loading}
               style={{
                 backgroundColor: "#0b2c6b",
                 color: "white",
                 border: "none",
                 padding: "12px 20px",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
         ) : (
@@ -194,6 +266,7 @@ function LoginRegisterPage() {
                 setRegisterForm({ ...registerForm, fullName: e.target.value })
               }
               style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+              required
             />
 
             <label style={{ display: "block", marginBottom: "8px" }}>
@@ -206,7 +279,49 @@ function LoginRegisterPage() {
                 setRegisterForm({ ...registerForm, email: e.target.value })
               }
               style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+              required
             />
+
+            {userType === "PATIENT" && (
+              <>
+                <label style={{ display: "block", marginBottom: "8px" }}>
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  value={registerForm.phoneNumber}
+                  onChange={(e) =>
+                    setRegisterForm({
+                      ...registerForm,
+                      phoneNumber: e.target.value,
+                    })
+                  }
+                  style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+                  required
+                />
+              </>
+            )}
+
+            {userType === "PROVIDER" && (
+              <>
+                <label style={{ display: "block", marginBottom: "8px" }}>
+                  Clinic ID
+                </label>
+                <input
+                  type="number"
+                  value={registerForm.clinicId}
+                  onChange={(e) =>
+                    setRegisterForm({
+                      ...registerForm,
+                      clinicId: e.target.value,
+                    })
+                  }
+                  placeholder="Enter existing clinic ID"
+                  style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+                  required
+                />
+              </>
+            )}
 
             <label style={{ display: "block", marginBottom: "8px" }}>
               Password
@@ -218,6 +333,7 @@ function LoginRegisterPage() {
                 setRegisterForm({ ...registerForm, password: e.target.value })
               }
               style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+              required
             />
 
             <label style={{ display: "block", marginBottom: "8px" }}>
@@ -229,23 +345,25 @@ function LoginRegisterPage() {
               onChange={(e) =>
                 setRegisterForm({
                   ...registerForm,
-                  confirmPassword: e.target.value
+                  confirmPassword: e.target.value,
                 })
               }
               style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
+              required
             />
 
             <button
               type="submit"
+              disabled={loading}
               style={{
                 backgroundColor: "#0b2c6b",
                 color: "white",
                 border: "none",
                 padding: "12px 20px",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
-              Register
+              {loading ? "Registering..." : "Register"}
             </button>
           </form>
         )}
@@ -259,7 +377,7 @@ function LoginRegisterPage() {
             color: "white",
             border: "none",
             padding: "12px 20px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           ENTER AS GUEST
