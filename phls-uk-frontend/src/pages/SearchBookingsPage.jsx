@@ -59,65 +59,141 @@ function SearchBookingsPage() {
     await loadSlots();
   }
 
+  function handleBooked(slotId) {
+    setSlots((prev) => prev.filter((slot) => slot.slotId !== slotId));
+  }
+
   return (
-    <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "24px" }}>
-      <h1>Search Bookings</h1>
+    <div className="page">
+      <div className="page-container">
+        <section className="page-hero">
+          <h1 className="page-title">Search Bookings</h1>
+          <p className="page-subtitle">
+            Find available appointments by city, specialty, date, and budget.
+          </p>
+        </section>
 
-      <form
-        onSubmit={handleSearch}
-        style={{
-          display: "grid",
-          gap: "12px",
-          marginBottom: "24px",
-          padding: "16px",
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          backgroundColor: "#f8fbff",
-        }}
-      >
-        <input
-          type="text"
-          placeholder="City"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
+        <section
+          className="card"
+          style={{
+            padding: "2rem",
+            marginBottom: "2rem",
+          }}
+        >
+          <form
+            onSubmit={handleSearch}
+            className="form-grid"
+            style={{
+              maxWidth: "900px",
+              margin: "0 auto",
+            }}
+          >
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: "1rem",
+              }}
+            >
+              <div>
+                <label className="form-label">City</label>
+                <input
+                  type="text"
+                  placeholder="Enter city"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                />
+              </div>
 
-        <input
-          type="text"
-          placeholder="Specialty"
-          value={specialty}
-          onChange={(e) => setSpecialty(e.target.value)}
-        />
+              <div>
+                <label className="form-label">Specialty</label>
+                <input
+                  type="text"
+                  placeholder="Enter specialty"
+                  value={specialty}
+                  onChange={(e) => setSpecialty(e.target.value)}
+                />
+              </div>
 
-        <input
-          type="number"
-          placeholder="Max price"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
+              <div>
+                <label className="form-label">Maximum price</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 200"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                />
+              </div>
 
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+              <div>
+                <label className="form-label">Preferred date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </div>
+            </div>
 
-        <div style={{ display: "flex", gap: "12px" }}>
-          <button type="submit">Search</button>
-          <button type="button" onClick={handleReset}>Reset</button>
-        </div>
-      </form>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "center",
+                flexWrap: "wrap",
+                marginTop: "0.5rem",
+              }}
+            >
+              <button type="submit" className="primary-btn">
+                Search
+              </button>
+              <button type="button" className="secondary-btn" onClick={handleReset}>
+                Reset
+              </button>
+            </div>
+          </form>
+        </section>
 
-      {loading && <p>Loading available slots...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {loading && (
+          <div className="text-center">
+            <p>Loading available slots...</p>
+          </div>
+        )}
 
-      {!loading && !error && slots.length === 0 && (
-        <p>No available bookings found.</p>
-      )}
+        {error && (
+          <div
+            className="error-box"
+            style={{ maxWidth: "900px", margin: "0 auto 1.5rem" }}
+          >
+            {error}
+          </div>
+        )}
 
-      {!loading && !error && slots.map((slot) => (
-        <SlotCard key={slot.slotId} slot={slot} />
-      ))}
+        {!loading && !error && slots.length === 0 && (
+          <div className="text-center">
+            <p>No available bookings found.</p>
+          </div>
+        )}
+
+        {!loading && !error && slots.length > 0 && (
+          <section
+            style={{
+              display: "grid",
+              gap: "1rem",
+              maxWidth: "1000px",
+              margin: "0 auto",
+            }}
+          >
+            {slots.map((slot) => (
+              <SlotCard
+                key={slot.slotId}
+                slot={slot}
+                onBooked={handleBooked}
+              />
+            ))}
+          </section>
+        )}
+      </div>
     </div>
   );
 }

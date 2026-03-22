@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   loginUser,
   registerPatient,
   registerProvider,
 } from "../services/authService";
+import logo from "../assets/logo.png";
+import panelBg from "../assets/logoBackground.png";
 import en from '../assets/en.png';
 import cy from '../assets/cy.png';
 import es from '../assets/es.png';
@@ -37,6 +39,15 @@ function LoginRegisterPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [theme, setTheme] = useState(localStorage.getItem("phlsTheme") || "light");
+  const [language, setLanguage] = useState(localStorage.getItem("phlsLanguage") || "English");
+
+  useEffect(() => {
+    localStorage.setItem("phlsTheme", theme);
+    localStorage.setItem("phlsLanguage", language);
+    document.body.classList.toggle("dark-theme", theme === "dark");
+  }, [theme, language]);
 
   useEffect(() => {
     const token = localStorage.getItem("phlsToken");
@@ -127,261 +138,413 @@ function LoginRegisterPage() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#cfe8f3",
-        padding: "32px",
-        color: "#0b2c6b",
+        display: "grid",
+        placeItems: "center",
+        padding: "2rem",
+        background: "linear-gradient(135deg, var(--bg) 0%, var(--surface-soft) 100%)",
       }}
     >
-      <h1 style={{ fontSize: "3rem", marginBottom: "24px", color: "#000" }}>
-        USER REGISTRATION & AUTHENTICATION
-      </h1>
-
-      <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
-        <button
-          onClick={() => setMode("login")}
-          style={{
-            backgroundColor: mode === "login" ? "#16a34a" : "#0b2c6b",
-            color: "white",
-            border: "none",
-            padding: "12px 20px",
-            cursor: "pointer",
-          }}
-        >
-          LOGIN
-        </button>
-
-        <button
-          onClick={() => setMode("register")}
-          style={{
-            backgroundColor: mode === "register" ? "#dc2626" : "#0b2c6b",
-            color: "white",
-            border: "none",
-            padding: "12px 20px",
-            cursor: "pointer",
-          }}
-        >
-          REGISTER
-        </button>
-      </div>
-
-      <div style={{ marginBottom: "20px" }}>
-        <h2 style={{ color: "#0b2c6b" }}>PHLS-UK</h2>
-        <div style={{ display: "flex", gap: "12px", marginTop: "12px" }}>
-          <button
-            onClick={() => setUserType("PATIENT")}
-            style={{
-              backgroundColor: userType === "PATIENT" ? "#16a34a" : "#ccc",
-              color: userType === "PATIENT" ? "white" : "black",
-              border: "none",
-              padding: "10px 18px",
-              cursor: "pointer",
-            }}
-          >
-            PATIENT
-          </button>
-
-          <button
-            onClick={() => setUserType("PROVIDER")}
-            style={{
-              backgroundColor: userType === "PROVIDER" ? "#dc2626" : "#ccc",
-              color: userType === "PROVIDER" ? "white" : "black",
-              border: "none",
-              padding: "10px 18px",
-              cursor: "pointer",
-            }}
-          >
-            PROVIDER
-          </button>
-        </div>
-      </div>
-
       <div
+        className="card login-layout-card"
         style={{
-          maxWidth: "420px",
-          backgroundColor: "#d9e5f0",
-          padding: "24px",
-          borderRadius: "8px",
-          border: "1px solid #999",
+          width: "100%",
+          maxWidth: "1120px",
+          display: "grid",
+          gridTemplateColumns: "1.1fr 0.9fr",
+          overflow: "hidden",
         }}
       >
-        {error && (
-          <p style={{ color: "red", marginTop: 0, marginBottom: "16px" }}>
-            {error}
-          </p>
-        )}
-
-        {mode === "login" ? (
-          <form onSubmit={handleLoginSubmit}>
-            <label style={{ display: "block", marginBottom: "8px" }}>
-              Email
-            </label>
-            <input
-              type="email"
-              value={loginForm.email}
-              onChange={(e) =>
-                setLoginForm({ ...loginForm, email: e.target.value })
-              }
-              placeholder="Enter Email Address..."
-              style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-              required
-            />
-
-            <label style={{ display: "block", marginBottom: "8px" }}>
-              Password
-            </label>
-            <input
-              type="password"
-              value={loginForm.password}
-              onChange={(e) =>
-                setLoginForm({ ...loginForm, password: e.target.value })
-              }
-              placeholder="Enter Password..."
-              style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-              required
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                backgroundColor: "#0b2c6b",
-                color: "white",
-                border: "none",
-                padding: "12px 20px",
-                cursor: "pointer",
-              }}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleRegisterSubmit}>
-            <label style={{ display: "block", marginBottom: "8px" }}>
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={registerForm.fullName}
-              onChange={(e) =>
-                setRegisterForm({ ...registerForm, fullName: e.target.value })
-              }
-              style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-              required
-            />
-
-            <label style={{ display: "block", marginBottom: "8px" }}>
-              Email
-            </label>
-            <input
-              type="email"
-              value={registerForm.email}
-              onChange={(e) =>
-                setRegisterForm({ ...registerForm, email: e.target.value })
-              }
-              style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-              required
-            />
-
-            {userType === "PATIENT" && (
-              <>
-                <label style={{ display: "block", marginBottom: "8px" }}>
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  value={registerForm.phoneNumber}
-                  onChange={(e) =>
-                    setRegisterForm({
-                      ...registerForm,
-                      phoneNumber: e.target.value,
-                    })
-                  }
-                  style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-                  required
-                />
-              </>
-            )}
-
-            {userType === "PROVIDER" && (
-              <>
-                <label style={{ display: "block", marginBottom: "8px" }}>
-                  Clinic ID
-                </label>
-                <input
-                  type="number"
-                  value={registerForm.clinicId}
-                  onChange={(e) =>
-                    setRegisterForm({
-                      ...registerForm,
-                      clinicId: e.target.value,
-                    })
-                  }
-                  placeholder="Enter existing clinic ID"
-                  style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-                  required
-                />
-              </>
-            )}
-
-            <label style={{ display: "block", marginBottom: "8px" }}>
-              Password
-            </label>
-            <input
-              type="password"
-              value={registerForm.password}
-              onChange={(e) =>
-                setRegisterForm({ ...registerForm, password: e.target.value })
-              }
-              style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-              required
-            />
-
-            <label style={{ display: "block", marginBottom: "8px" }}>
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              value={registerForm.confirmPassword}
-              onChange={(e) =>
-                setRegisterForm({
-                  ...registerForm,
-                  confirmPassword: e.target.value,
-                })
-              }
-              style={{ width: "100%", padding: "10px", marginBottom: "16px" }}
-              required
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                backgroundColor: "#0b2c6b",
-                color: "white",
-                border: "none",
-                padding: "12px 20px",
-                cursor: "pointer",
-              }}
-            >
-              {loading ? "Registering..." : "Register"}
-            </button>
-          </form>
-        )}
-      </div>
-
-      <div style={{ marginTop: "24px" }}>
-        <button
-          onClick={handleGuestEntry}
+        <div
           style={{
-            backgroundColor: "#dc2626",
-            color: "white",
-            border: "none",
-            padding: "12px 20px",
-            cursor: "pointer",
+            padding: "3rem",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            color: "#ffffff",
+            backgroundImage: `linear-gradient(rgba(8, 22, 55, 0.60), rgba(8, 22, 55, 0.60)), url(${panelBg})`,
+            backgroundRepeat: "repeat-x",
+            backgroundPosition: "center",
+            backgroundSize: "auto 100%",
           }}
         >
-          ENTER AS GUEST
-        </button>
+          <div style={{
+              marginBottom: "1.5rem",
+              display: "flex",
+              justifyContent: "center",
+            }}>
+            <img
+              src={logo}
+              alt="PHLS-UK"
+              style={{
+                maxWidth: "260px",
+                width: "100%",
+                height: "auto",
+              }}
+            />
+          </div>
+
+          <h1 style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", marginBottom: "1rem" }}>
+            Search and book private healthcare with confidence
+          </h1>
+
+          <p style={{ fontSize: "1.05rem", maxWidth: "540px", opacity: 0.96 }}>
+            Compare services, discover providers, and manage appointments through
+            a cleaner and more accessible healthcare platform.
+          </p>
+
+          <div
+            style={{
+              marginTop: "2rem",
+              display: "grid",
+              gap: "1rem",
+              maxWidth: "420px",
+            }}
+          >
+            <div
+              style={{
+                padding: "1rem",
+                borderRadius: "18px",
+                background: "rgba(0, 0, 0, 0.35)",
+                border: "1px solid rgba(255,255,255,0.14)",
+                backdropFilter: "blur(6px)",
+              }}
+            >
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "0.5rem",
+                  fontWeight: 700,
+                  color: "#ffffff",
+                }}
+              >
+                Language
+              </label>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                style={{
+                  background: "rgba(255,255,255,0.92)",
+                  color: "#111827",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                }}
+              >
+                <option>English</option>
+                <option>Welsh/Cymru</option>
+                <option>Spanish</option>
+                <option>Panjabi</option>
+                <option>Polish</option>
+                <option>Portuguese</option>
+                <option>Romanian</option>
+                <option>Urdu</option>
+              </select>
+            </div>
+
+            <div
+              style={{
+                padding: "1rem",
+                borderRadius: "18px",
+                background: "rgba(0, 0, 0, 0.35)",
+                border: "1px solid rgba(255,255,255,0.14)",
+                backdropFilter: "blur(6px)",
+              }}
+            >
+              <p
+                style={{
+                  marginBottom: "0.65rem",
+                  fontWeight: 700,
+                  color: "#ffffff",
+                }}
+              >
+                Theme
+              </p>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "0.75rem",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setTheme("light")}
+                  style={{
+                    background: theme === "light" ? "#ffffff" : "rgba(255,255,255,0.18)",
+                    color: theme === "light" ? "#111827" : "#ffffff",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                  }}
+                >
+                  Light
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTheme("dark")}
+                  style={{
+                    background: theme === "dark" ? "#111827" : "rgba(255,255,255,0.18)",
+                    color: "#ffffff",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                  }}
+                >
+                  Dark
+                </button>
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                flexWrap: "wrap",
+              }}
+            >
+              <Link
+                to="/faq-patient"
+                style={{
+                  display: "inline-flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "0.75rem 1rem",
+                  borderRadius: "999px",
+                  background: "rgba(0, 0, 0, 0.35)",
+                  border: "1px solid rgba(255,255,255,0.14)",
+                  color: "#ffffff",
+                  fontWeight: 600,
+                  minWidth: "140px",
+                }}
+              >
+                Patient FAQs
+              </Link>
+
+              <Link
+                to="/faq-provider"
+                style={{
+                  display: "inline-flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "0.75rem 1rem",
+                  borderRadius: "999px",
+                  background: "rgba(0, 0, 0, 0.35)",
+                  border: "1px solid rgba(255,255,255,0.14)",
+                  color: "#ffffff",
+                  fontWeight: 600,
+                  minWidth: "140px",
+                }}
+              >
+                Provider FAQs
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            padding: "2.25rem",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <h2 style={{ marginBottom: "0.5rem" }}>
+              {mode === "login" ? "Welcome back" : "Create your account"}
+            </h2>
+            <p style={{ color: "var(--text-soft)", marginBottom: 0 }}>
+              Access PHLS-UK as a patient or provider
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "0.75rem",
+              marginBottom: "1rem",
+            }}
+          >
+            <button
+              className={mode === "login" ? "primary-btn" : "secondary-btn"}
+              onClick={() => setMode("login")}
+              type="button"
+            >
+              Login
+            </button>
+            <button
+              className={mode === "register" ? "primary-btn" : "secondary-btn"}
+              onClick={() => setMode("register")}
+              type="button"
+            >
+              Register
+            </button>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "0.75rem",
+              marginBottom: "1.25rem",
+            }}
+          >
+            <button
+              className={userType === "PATIENT" ? "primary-btn" : "secondary-btn"}
+              onClick={() => setUserType("PATIENT")}
+              type="button"
+            >
+              Patient
+            </button>
+            <button
+              className={userType === "PROVIDER" ? "primary-btn" : "secondary-btn"}
+              onClick={() => setUserType("PROVIDER")}
+              type="button"
+            >
+              Provider
+            </button>
+          </div>
+
+          {error && (
+            <div className="error-box" style={{ marginBottom: "1rem" }}>
+              {error}
+            </div>
+          )}
+
+          {mode === "login" ? (
+            <form onSubmit={handleLoginSubmit} className="form-grid">
+              <div>
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  value={loginForm.email}
+                  onChange={(e) =>
+                    setLoginForm({ ...loginForm, email: e.target.value })
+                  }
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Password</label>
+                <input
+                  type="password"
+                  value={loginForm.password}
+                  onChange={(e) =>
+                    setLoginForm({ ...loginForm, password: e.target.value })
+                  }
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              <button type="submit" className="primary-btn" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleRegisterSubmit} className="form-grid">
+              <div>
+                <label className="form-label">Full name</label>
+                <input
+                  type="text"
+                  value={registerForm.fullName}
+                  onChange={(e) =>
+                    setRegisterForm({ ...registerForm, fullName: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  value={registerForm.email}
+                  onChange={(e) =>
+                    setRegisterForm({ ...registerForm, email: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              {userType === "PATIENT" && (
+                <div>
+                  <label className="form-label">Phone number</label>
+                  <input
+                    type="text"
+                    value={registerForm.phoneNumber}
+                    onChange={(e) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        phoneNumber: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              )}
+
+              {userType === "PROVIDER" && (
+                <div>
+                  <label className="form-label">Clinic ID</label>
+                  <input
+                    type="number"
+                    value={registerForm.clinicId}
+                    onChange={(e) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        clinicId: e.target.value,
+                      })
+                    }
+                    placeholder="Enter existing clinic ID"
+                    required
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="form-label">Password</label>
+                <input
+                  type="password"
+                  value={registerForm.password}
+                  onChange={(e) =>
+                    setRegisterForm({ ...registerForm, password: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="form-label">Confirm password</label>
+                <input
+                  type="password"
+                  value={registerForm.confirmPassword}
+                  onChange={(e) =>
+                    setRegisterForm({
+                      ...registerForm,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <button type="submit" className="primary-btn" disabled={loading}>
+                {loading ? "Registering..." : "Register"}
+              </button>
+            </form>
+          )}
+
+          <div style={{ marginTop: "1rem" }}>
+            <button
+              onClick={handleGuestEntry}
+              className="secondary-btn"
+              style={{ width: "100%" }}
+              type="button"
+            >
+              Enter as Guest
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

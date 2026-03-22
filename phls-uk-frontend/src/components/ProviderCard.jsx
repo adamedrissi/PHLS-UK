@@ -1,44 +1,53 @@
 function ProviderCard({ provider }) {
   return (
     <div
+      className="card"
       style={{
-        border: "1px solid #ddd",
-        borderRadius: "12px",
-        padding: "16px",
-        marginBottom: "16px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-        backgroundColor: "#ffffff",
-        color: "#111111"
+        padding: "1.25rem",
+        textAlign: "left",
+        height: "100%",
       }}
     >
-      <h3 style={{ color: "#111111", marginTop: 0 }}>{provider.providerName}</h3>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: "1rem",
+          alignItems: "start",
+          marginBottom: "1rem",
+          flexWrap: "wrap",
+        }}
+      >
+        <div>
+          <h3 style={{ marginBottom: "0.35rem" }}>{provider.providerName}</h3>
+          <p style={{ marginBottom: 0, color: "var(--text-soft)" }}>
+            {provider.clinicName}
+          </p>
+        </div>
 
-      <p style={{ color: "#111111" }}>
-        <strong>Clinic:</strong> {provider.clinicName}
-      </p>
+        <span className="status-pill">
+          Rating: {provider.clinicRatingAverage ?? "N/A"}
+        </span>
+      </div>
 
-      <p style={{ color: "#111111" }}>
-        <strong>City:</strong> {provider.city}
-      </p>
-
-      <p style={{ color: "#111111" }}>
-        <strong>Postcode:</strong> {provider.postcode}
-      </p>
-
-      <p style={{ color: "#111111" }}>
-        <strong>Price from:</strong> £{provider.consultationPriceFrom}
-      </p>
-
-      <p style={{ color: "#111111" }}>
-        <strong>Rating:</strong> {provider.clinicRatingAverage}
-      </p>
-
-      <p style={{ color: "#111111" }}>
-        <strong>Specialties:</strong>{" "}
-        {provider.specialties && provider.specialties.length > 0
-          ? provider.specialties.join(", ")
-          : "Not listed"}
-      </p>
+      <div
+        style={{
+          display: "grid",
+          gap: "0.65rem",
+          color: "var(--text-soft)",
+        }}
+      >
+        <p><strong style={{ color: "var(--text)" }}>City:</strong> {provider.city}</p>
+        <p><strong style={{ color: "var(--text)" }}>Postcode:</strong> {provider.postcode}</p>
+        <p>
+          <strong style={{ color: "var(--text)" }}>Price from:</strong> £
+          {provider.consultationPriceFrom}
+        </p>
+        <p>
+          <strong style={{ color: "var(--text)" }}>Specialties:</strong>{" "}
+          {provider.specialties?.length ? provider.specialties.join(", ") : "Not listed"}
+        </p>
+      </div>
     </div>
   );
 }

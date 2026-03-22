@@ -4,16 +4,32 @@ import HomePage from "./pages/HomePage";
 import SettingsPage from "./pages/SettingsPage";
 import SearchInsurancePage from "./pages/SearchInsurancePage";
 import SearchBookingsPage from "./pages/SearchBookingsPage";
+import ManageBookingsPage from "./pages/ManageBookingsPage";
+import ManageProfilePage from "./pages/ManageProfilePage";
+import PatientFaqPage from "./pages/PatientFaqPage";
+import ProviderFaqPage from "./pages/ProviderFaqPage";
+import AppShell from "./components/AppShell";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
+
       <Routes>
         <Route path="/" element={<LoginRegisterPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/searchbookings" element={<SearchBookingsPage />} />
-        <Route path="/searchinsurance" element={<SearchInsurancePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+
+        <Route element={<AppShell />}>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/searchbookings" element={<SearchBookingsPage />} />
+          <Route path="/managebookings" element={<ManageBookingsPage />} />
+          <Route path="/searchinsurance" element={<SearchInsurancePage />} />
+          <Route path="/manageprofile" element={<ManageProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/faq-patient" element={<PatientFaqPage />} />
+          <Route path="/faq-provider" element={<ProviderFaqPage />} />
+        </Route>
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

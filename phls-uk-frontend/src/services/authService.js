@@ -9,12 +9,13 @@ export async function loginUser(payload) {
     body: JSON.stringify(payload),
   });
 
+  const data = await response.json().catch(() => null);
+
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Login failed");
+    throw new Error(data?.message || "Login failed");
   }
 
-  return response.json();
+  return data;
 }
 
 export async function registerPatient(payload) {
@@ -26,10 +27,13 @@ export async function registerPatient(payload) {
     body: JSON.stringify(payload),
   });
 
+  const data = await response.json().catch(() => null);
+
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Patient registration failed");
+    throw new Error(data?.message || "Patient registration failed");
   }
+
+  return data;
 }
 
 export async function registerProvider(payload) {
@@ -41,8 +45,11 @@ export async function registerProvider(payload) {
     body: JSON.stringify(payload),
   });
 
+  const data = await response.json().catch(() => null);
+
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Provider registration failed");
+    throw new Error(data?.message || "Provider registration failed");
   }
+
+  return data;
 }
