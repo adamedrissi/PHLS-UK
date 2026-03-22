@@ -1,27 +1,44 @@
 import { useEffect, useState } from "react";
-import { searchAvailableSlots } from "../services/slotService";
+import { searchRankedSlots, getAllSpecialties, searchLocation } from "../services/slotService";
 import SlotCard from "../components/SlotCard";
 
 function SearchBookingsPage() {
   const [slots, setSlots] = useState([]);
-  const [city, setCity] = useState("");
   const [specialty, setSpecialty] = useState("");
+  const [specialties, setSpecialties] = useState([]);
   const [maxPrice, setMaxPrice] = useState("");
+  const [minRating, setMinRating] = useState("");
   const [date, setDate] = useState("");
+  const [preferredTimeBucket, setPreferredTimeBucket] = useState("");
+  const [rankingModel, setRankingModel] = useState("BASELINE");
+  const [limit, setLimit] = useState(10);
+  const [locationQuery, setLocationQuery] = useState("");
+  const [locationResults, setLocationResults] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [radiusMiles, setRadiusMiles] = useState("10");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    loadSlots();
+    loadInitialData();
   }, []);
 
-  async function loadSlots() {
+  async function loadInitialData() {
     try {
       setLoading(true);
       setError("");
-      const data = await searchAvailableSlots({});
-      setSlots(data);
+
+      const [specialtyData, slotData] = await Promise.all([
+        getAllSpecialties(),
+        searchRankedSlots({
+          rankingModel: "BASELINE",
+          limit: 10,
+        }),
+      ]);
+
+      setSpecialties(specialtyData);
+      setSlots(slotData);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -36,11 +53,17 @@ function SearchBookingsPage() {
       setLoading(true);
       setError("");
 
-      const data = await searchAvailableSlots({
-        city,
+      const data = await searchRankedSlots({
         specialty,
         maxPrice,
-        date,
+        minRating,
+        preferredDate: date,
+        preferredTimeBucket,
+        rankingModel,
+        limit,
+        userLatitude: selectedLocation?.latitude,
+        userLongitude: selectedLocation?.longitude,
+        radiusMiles: selectedLocation ? radiusMiles : "",
       });
 
       setSlots(data);
@@ -51,12 +74,60 @@ function SearchBookingsPage() {
     }
   }
 
+  async function handleLocationLookup() {
+    try {
+      setError("");
+
+      if (!locationQuery.trim()) {
+        setLocationResults([]);
+        return;
+      }
+
+      const results = await searchLocation(locationQuery.trim());
+      setLocationResults(results);
+    } catch (err) {
+      setError(err.message || "Location search failed");
+    }
+  }
+
+  function handleSelectLocation(location) {
+    setSelectedLocation(location);
+    setLocationQuery(location.displayName);
+    setLocationResults([]);
+  }
+
   async function handleReset() {
-    setCity("");
     setSpecialty("");
     setMaxPrice("");
+    setMinRating("");
     setDate("");
-    await loadSlots();
+    setPreferredTimeBucket("");
+    setRankingModel("BASELINE");
+    setLimit(10);
+    setLocationQuery("");
+    setLocationResults([]);
+    setSelectedLocation(null);
+    setRadiusMiles("10");
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const [specialtyData, slotData] = await Promise.all([
+          getAllSpecialties(),
+          searchRankedSlots({
+          rankingModel: "BASELINE",
+          limit: 10,
+        }),
+      ]);
+
+      setSpecialties(specialtyData);
+      setSlots(slotData);
+    } catch (err) {
+      setError(err.message || "Reset failed");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleBooked(slotId) {
@@ -69,24 +140,15 @@ function SearchBookingsPage() {
         <section className="page-hero">
           <h1 className="page-title">Search Bookings</h1>
           <p className="page-subtitle">
-            Find available appointments by city, specialty, date, and budget.
+            Find and rank available appointments by city, specialty, date, time, and budget.
           </p>
         </section>
 
-        <section
-          className="card"
-          style={{
-            padding: "2rem",
-            marginBottom: "2rem",
-          }}
-        >
+        <section className="card" style={{ padding: "2rem", marginBottom: "2rem" }}>
           <form
             onSubmit={handleSearch}
             className="form-grid"
-            style={{
-              maxWidth: "900px",
-              margin: "0 auto",
-            }}
+            style={{ maxWidth: "1000px", margin: "0 auto" }}
           >
             <div
               style={{
@@ -96,33 +158,110 @@ function SearchBookingsPage() {
               }}
             >
               <div>
-                <label className="form-label">City</label>
-                <input
-                  type="text"
-                  placeholder="Enter city"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
+                <label className="form-label">Location</label>
+                <div style={{ display: "flex", gap: "0.75rem" }}>
+                  <input
+                    type="text"
+                    placeholder="Enter UK town, city, postcode, or address"
+                    value={locationQuery}
+                    onChange={(e) => {
+                      setLocationQuery(e.target.value);
+                      setSelectedLocation(null);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={handleLocationLookup}
+                  >
+                    Find location
+                  </button>
+                </div>
+
+                {selectedLocation && (
+                  <p style={{ marginTop: "0.5rem", color: "var(--text-soft)" }}>
+                    Selected: {selectedLocation.displayName}
+                  </p>
+                )}
+
+                {locationResults.length > 0 && (
+                  <div
+                    className="card"
+                    style={{
+                      marginTop: "0.75rem",
+                      padding: "0.75rem",
+                      maxHeight: "220px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    {locationResults.map((location, index) => (
+                      <button
+                        key={`${location.displayName}-${index}`}
+                        type="button"
+                        className="secondary-btn"
+                        onClick={() => handleSelectLocation(location)}
+                        style={{
+                          width: "100%",
+                          textAlign: "left",
+                          marginBottom: "0.5rem",
+                        }}
+                      >
+                        {location.displayName}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="form-label">Radius</label>
+                <select
+                  value={radiusMiles}
+                  onChange={(e) => setRadiusMiles(e.target.value)}
+                >
+                  <option value="5">5 miles</option>
+                  <option value="10">10 miles</option>
+                  <option value="25">25 miles</option>
+                  <option value="50">50 miles</option>
+                </select>
               </div>
 
               <div>
                 <label className="form-label">Specialty</label>
-                <input
-                  type="text"
-                  placeholder="Enter specialty"
+                <select
                   value={specialty}
                   onChange={(e) => setSpecialty(e.target.value)}
+                >
+                  <option value="">All specialties</option>
+                  {specialties.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="form-label">Maximum price (£)</label>
+                <input
+                  type="number"
+                  placeholder="Enter budget"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="form-label">Maximum price</label>
-                <input
-                  type="number"
-                  placeholder="e.g. 200"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                />
+                <label className="form-label">Minimum rating</label>
+                <select
+                  value={minRating}
+                  onChange={(e) => setMinRating(e.target.value)}
+                >
+                  <option value="">Any rating</option>
+                  <option value="3.5">3.5+</option>
+                  <option value="4.0">4.0+</option>
+                  <option value="4.5">4.5+</option>
+                </select>
               </div>
 
               <div>
@@ -132,6 +271,42 @@ function SearchBookingsPage() {
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                 />
+              </div>
+
+              <div>
+                <label className="form-label">Preferred time</label>
+                <select
+                  value={preferredTimeBucket}
+                  onChange={(e) => setPreferredTimeBucket(e.target.value)}
+                >
+                  <option value="">Any time</option>
+                  <option value="MORNING">Morning</option>
+                  <option value="AFTERNOON">Afternoon</option>
+                  <option value="EVENING">Evening</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="form-label">Ranking model</label>
+                <select
+                  value={rankingModel}
+                  onChange={(e) => setRankingModel(e.target.value)}
+                >
+                  <option value="BASELINE">Baseline weighted</option>
+                  <option value="CONTENT">Content-based similarity</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="form-label">Results limit</label>
+                <select
+                  value={limit}
+                  onChange={(e) => setLimit(Number(e.target.value))}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                </select>
               </div>
             </div>
 
@@ -154,9 +329,22 @@ function SearchBookingsPage() {
           </form>
         </section>
 
+        {!loading && !error && slots.length > 0 && (
+          <div className="text-center" style={{ marginBottom: "1rem" }}>
+            <p>
+              Showing {slots.length} ranked result{slots.length !== 1 ? "s" : ""} using{" "}
+              <strong>
+                {rankingModel === "BASELINE"
+                  ? "Baseline weighted ranking"
+                  : "Content-based similarity"}
+              </strong>
+            </p>
+          </div>
+        )}
+
         {loading && (
           <div className="text-center">
-            <p>Loading available slots...</p>
+            <p>Loading ranked slots...</p>
           </div>
         )}
 
@@ -185,11 +373,7 @@ function SearchBookingsPage() {
             }}
           >
             {slots.map((slot) => (
-              <SlotCard
-                key={slot.slotId}
-                slot={slot}
-                onBooked={handleBooked}
-              />
+              <SlotCard key={slot.slotId} slot={slot} onBooked={handleBooked} />
             ))}
           </section>
         )}

@@ -70,25 +70,25 @@ function HomePage() {
             }}
           >
 
-            {role === "PATIENT" || role === "GUEST" && (
+            {(role === "PATIENT" || role === "GUEST") && (
               <button className="primary-btn" onClick={() => navigate("/searchbookings")}>
                 Search Bookings
               </button>
             )}
 
-            {role === "PATIENT" || role === "PROVIDER" && (
+            {(role === "PATIENT" || role === "PROVIDER") && (
               <button className="secondary-btn" onClick={() => navigate("/managebookings")}>
                 Manage Bookings
               </button>
             )}
             
-            {role === "PATIENT" || role === "GUEST" && (
+            {(role === "PATIENT" || role === "GUEST") && (
               <button className="secondary-btn" onClick={() => navigate("/searchinsurance")}>
                 Search Insurance
               </button>
             )}
 
-            {role === "PATIENT" || role === "PROVIDER" && (
+            {(role === "PATIENT" || role ==="PROVIDER") && (
               <button className="secondary-btn" onClick={() => navigate("/manageprofile")}>
                 Manage Profile
               </button>

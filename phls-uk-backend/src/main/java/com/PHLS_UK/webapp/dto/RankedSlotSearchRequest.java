@@ -11,12 +11,11 @@ public class RankedSlotSearchRequest {
     private String specialty;
     private String city;
     private BigDecimal maxPrice;
+    private BigDecimal minRating;
 
     private Double userLatitude;
     private Double userLongitude;
     private Double radiusMiles;
-
-    private String insuranceProviderName;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate preferredDate;
@@ -50,6 +49,14 @@ public class RankedSlotSearchRequest {
         return maxPrice;
     }
 
+    public BigDecimal getMinRating() {
+        return minRating;
+    }
+
+    public void setMinRating(BigDecimal minRating) {
+        this.minRating = minRating;
+    }
+
     public void setMaxPrice(BigDecimal maxPrice) {
         this.maxPrice = maxPrice;
     }
@@ -76,14 +83,6 @@ public class RankedSlotSearchRequest {
 
     public void setRadiusMiles(Double radiusMiles) {
         this.radiusMiles = radiusMiles;
-    }
-
-    public String getInsuranceProviderName() {
-        return insuranceProviderName;
-    }
-
-    public void setInsuranceProviderName(String insuranceProviderName) {
-        this.insuranceProviderName = insuranceProviderName;
     }
 
     public LocalDate getPreferredDate() {

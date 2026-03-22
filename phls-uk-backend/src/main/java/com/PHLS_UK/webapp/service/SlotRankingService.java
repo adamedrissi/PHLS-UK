@@ -39,22 +39,59 @@ public class SlotRankingService {
     }
 
     private boolean preFilter(AvailabilitySlot slot, RankedSlotSearchRequest request) {
-        boolean cityOk = request.getCity() == null || request.getCity().isBlank()
-            || slot.getClinic().getCity().equalsIgnoreCase(request.getCity().trim());
         boolean specialtyOk = request.getSpecialty() == null || request.getSpecialty().isBlank()
             || slot.getProvider().getSpecialties().stream()
             .anyMatch(s -> s.getName().equalsIgnoreCase(request.getSpecialty().trim()));
+
         boolean priceOk = request.getMaxPrice() == null
             || (slot.getPrice() != null && slot.getPrice().compareTo(request.getMaxPrice()) <= 0);
+
+        boolean ratingOk = request.getMinRating() == null
+            || (slot.getClinic().getRatingAverage() != null
+                && slot.getClinic().getRatingAverage().compareTo(request.getMinRating()) >= 0);
+
         boolean dateOk = true;
         if (request.getPreferredDate() != null) {
             long daysDiff = Math.abs(
                 slot.getStartTime().toLocalDate().toEpochDay()
                 - request.getPreferredDate().toEpochDay()
-        );
-        dateOk = daysDiff <= 7; // allow ±7 days instead of exact match
+            );
+            dateOk = daysDiff <= 7;
         }
-        return cityOk && specialtyOk && priceOk && dateOk;
+
+        boolean radiusOk = true;
+        if (request.getUserLatitude() != null
+                && request.getUserLongitude() != null
+                && request.getRadiusMiles() != null
+                && slot.getClinic().getLatitude() != null
+                && slot.getClinic().getLongitude() != null) {
+
+            double distanceMiles = haversineMiles(
+                request.getUserLatitude(),
+                request.getUserLongitude(),
+                slot.getClinic().getLatitude().doubleValue(),
+                slot.getClinic().getLongitude().doubleValue()
+        );
+
+            radiusOk = distanceMiles <= request.getRadiusMiles();
+        }
+
+        return specialtyOk && priceOk && ratingOk && dateOk && radiusOk;
+    }
+
+    private double haversineMiles(double lat1, double lon1, double lat2, double lon2) {
+        final double earthRadiusMiles = 3958.8;
+
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadiusMiles * c;
     }
 
     private RankedSlotSearchResponse mapRanked(AvailabilitySlot slot, RankedSlotSearchRequest request) {
@@ -89,20 +126,77 @@ public class SlotRankingService {
         double dateScore = computeDateScore(slot, request);
         double timeBucketScore = computeTimeBucketScore(slot, request);
         double ratingScore = normalizeRating(slot.getClinic().getRatingAverage());
-        double insuranceScore = computeInsuranceScore(slot, request);
+        double distanceScore = computeDistanceScore(slot, request);
 
         return 0.30 * specialtyMatch
-                + 0.15 * priceScore
-                + 0.20 * dateScore
-                + 0.10 * timeBucketScore
-                + 0.20 * ratingScore
-                + 0.05 * insuranceScore;
+            + 0.15 * priceScore
+            + 0.15 * dateScore
+            + 0.10 * timeBucketScore
+            + 0.15 * ratingScore
+            + 0.15 * distanceScore;
     }
 
     private double computeContentScore(AvailabilitySlot slot, RankedSlotSearchRequest request) {
-        double[] queryVector = buildQueryVector(request);
-        double[] itemVector = buildItemVector(slot);
-        return cosineSimilarity(queryVector, itemVector);
+        double totalScore = 0.0;
+        int activeFeatures = 0;
+
+        if (request.getSpecialty() != null && !request.getSpecialty().isBlank()) {
+            totalScore += computeSpecialtyMatch(slot, request);
+            activeFeatures++;
+        }
+
+        if (request.getMaxPrice() != null) {
+            totalScore += computePriceScore(slot.getPrice(), request.getMaxPrice());
+            activeFeatures++;
+        }
+
+        if (request.getMinRating() != null) {
+            totalScore += computeRatingPreferenceScore(slot, request);
+            activeFeatures++;
+     }
+
+        if (request.getPreferredDate() != null) {
+            totalScore += computeDateScore(slot, request);
+            activeFeatures++;
+        }
+
+        if (request.getPreferredTimeBucket() != null && !request.getPreferredTimeBucket().isBlank()) {
+            totalScore += computeTimeBucketScore(slot, request);
+            activeFeatures++;
+        }
+
+        if (request.getUserLatitude() != null
+            && request.getUserLongitude() != null
+            && request.getRadiusMiles() != null) {
+        totalScore += computeDistanceScore(slot, request);
+        activeFeatures++;
+        }
+
+        if (activeFeatures == 0) {
+            return normalizeRating(slot.getClinic().getRatingAverage());
+        }
+
+        return totalScore / activeFeatures;
+    }
+
+    private double computeRatingPreferenceScore(AvailabilitySlot slot, RankedSlotSearchRequest request) {
+        BigDecimal clinicRating = slot.getClinic().getRatingAverage();
+        BigDecimal minRating = request.getMinRating();
+
+        if (clinicRating == null) {
+            return 0.0;
+        }
+
+        if (minRating == null) {
+            return normalizeRating(clinicRating);
+        }
+
+        if (clinicRating.compareTo(minRating) >= 0) {
+            return 1.0;
+        }
+
+        double gap = minRating.subtract(clinicRating).doubleValue();
+        return Math.max(0.0, 1.0 - gap);
     }
 
     private double computeSpecialtyMatch(AvailabilitySlot slot, RankedSlotSearchRequest request) {
@@ -169,97 +263,33 @@ public class SlotRankingService {
         return Math.max(0.0, Math.min(1.0, rating.doubleValue() / 5.0));
     }
 
-    private double computeInsuranceScore(AvailabilitySlot slot, RankedSlotSearchRequest request) {
-        if (request.getInsuranceProviderName() == null || request.getInsuranceProviderName().isBlank()) {
+    private double computeDistanceScore(AvailabilitySlot slot, RankedSlotSearchRequest request) {
+        if (request.getUserLatitude() == null
+                || request.getUserLongitude() == null
+                || request.getRadiusMiles() == null
+                || slot.getClinic().getLatitude() == null
+                || slot.getClinic().getLongitude() == null) {
             return 0.5;
         }
 
-        // Placeholder until clinic insurance mapping is exposed in entity layer
-        return 0.0;
+        double distanceMiles = haversineMiles(
+                request.getUserLatitude(),
+                request.getUserLongitude(),
+                slot.getClinic().getLatitude().doubleValue(),
+                slot.getClinic().getLongitude().doubleValue()
+        );
+
+        double radius = request.getRadiusMiles();
+            if (radius <= 0) {
+                return 0.0;
+            }
+
+        return Math.max(0.0, 1.0 - (distanceMiles / radius));
     }
 
     private String getTimeBucket(int hour) {
         if (hour < 12) return "MORNING";
         if (hour < 17) return "AFTERNOON";
         return "EVENING";
-    }
-
-    private double[] buildQueryVector(RankedSlotSearchRequest request) {
-        return new double[] {
-                textMatchFeature(request.getSpecialty(), "Physiotherapy"),
-                textMatchFeature(request.getSpecialty(), "Cardiology"),
-                textMatchFeature(request.getSpecialty(), "Dermatology"),
-                textMatchFeature(request.getCity(), "London"),
-                textMatchFeature(request.getCity(), "Manchester"),
-                normalizeBudget(request.getMaxPrice()),
-                timeBucketFeature(request.getPreferredTimeBucket(), "MORNING"),
-                timeBucketFeature(request.getPreferredTimeBucket(), "AFTERNOON"),
-                timeBucketFeature(request.getPreferredTimeBucket(), "EVENING")
-        };
-    }
-
-    private double[] buildItemVector(AvailabilitySlot slot) {
-        boolean hasPhysio = slot.getProvider().getSpecialties().stream()
-                .anyMatch(s -> s.getName().equalsIgnoreCase("Physiotherapy"));
-        boolean hasCardiology = slot.getProvider().getSpecialties().stream()
-                .anyMatch(s -> s.getName().equalsIgnoreCase("Cardiology"));
-        boolean hasDermatology = slot.getProvider().getSpecialties().stream()
-                .anyMatch(s -> s.getName().equalsIgnoreCase("Dermatology"));
-
-        return new double[] {
-                hasPhysio ? 1.0 : 0.0,
-                hasCardiology ? 1.0 : 0.0,
-                hasDermatology ? 1.0 : 0.0,
-                "London".equalsIgnoreCase(slot.getClinic().getCity()) ? 1.0 : 0.0,
-                "Manchester".equalsIgnoreCase(slot.getClinic().getCity()) ? 1.0 : 0.0,
-                normalizeBudget(slot.getPrice()),
-                timeBucketFeature(getTimeBucket(slot.getStartTime().getHour()), "MORNING"),
-                timeBucketFeature(getTimeBucket(slot.getStartTime().getHour()), "AFTERNOON"),
-                timeBucketFeature(getTimeBucket(slot.getStartTime().getHour()), "EVENING")
-        };
-    }
-
-    private double textMatchFeature(String actual, String target) {
-        if (actual == null || actual.isBlank()) {
-            return 0.0;
-        }
-        return actual.equalsIgnoreCase(target) ? 1.0 : 0.0;
-    }
-
-    private double timeBucketFeature(String actual, String target) {
-        if (actual == null || actual.isBlank()) {
-            return 0.0;
-        }
-        return actual.equalsIgnoreCase(target) ? 1.0 : 0.0;
-    }
-
-    private double normalizeBudget(BigDecimal value) {
-        if (value == null) {
-            return 0.0;
-        }
-        double v = value.doubleValue();
-        return Math.min(v / 200.0, 1.0);
-    }
-
-    private double cosineSimilarity(double[] a, double[] b) {
-        if (a.length != b.length) {
-            throw new IllegalArgumentException("Vector lengths must match");
-        }
-
-        double dot = 0.0;
-        double normA = 0.0;
-        double normB = 0.0;
-
-        for (int i = 0; i < a.length; i++) {
-            dot += a[i] * b[i];
-            normA += a[i] * a[i];
-            normB += b[i] * b[i];
-        }
-
-        if (normA == 0.0 || normB == 0.0) {
-            return 0.0;
-        }
-
-        return dot / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 }

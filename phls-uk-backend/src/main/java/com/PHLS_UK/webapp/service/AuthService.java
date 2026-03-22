@@ -84,10 +84,33 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
             .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid email or password");
         }
+
         String token = jwtService.generateToken(user.getEmail());
-        return new LoginResponse(token, user.getRole().name(), user.getId());
+
+        String fullName;
+
+        if (user.getRole() == Role.PATIENT) {
+            PatientProfile patientProfile = patientRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Patient profile not found"));
+            fullName = patientProfile.getFullName();
+        } else if (user.getRole() == Role.PROVIDER) {
+            ProviderProfile providerProfile = providerRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Provider profile not found"));
+            fullName = providerProfile.getFullName();
+        } else {
+            fullName = "";
+        }
+
+        return new LoginResponse(
+            token,
+            user.getRole().name(),
+            user.getId(),
+            fullName,
+            user.getEmail()
+        );
     }
 }

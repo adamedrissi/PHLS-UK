@@ -43,13 +43,7 @@ function SlotCard({ slot, onBooked }) {
   }
 
   return (
-    <div
-      className="card"
-      style={{
-        padding: "1.25rem",
-        textAlign: "left",
-      }}
-    >
+    <div className="card" style={{ padding: "1.25rem", textAlign: "left" }}>
       <div
         style={{
           display: "flex",
@@ -67,7 +61,19 @@ function SlotCard({ slot, onBooked }) {
           </p>
         </div>
 
-        <span className="status-pill">£{slot.price}</span>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <span className="status-pill">£{slot.price}</span>
+          {slot.rankingModel && (
+            <span className="status-pill">
+              {slot.rankingModel === "BASELINE" ? "Baseline" : "Content"}
+            </span>
+          )}
+          {slot.rankingScore !== undefined && slot.rankingScore !== null && (
+            <span className="status-pill">
+              Score: {Number(slot.rankingScore).toFixed(3)}
+            </span>
+          )}
+        </div>
       </div>
 
       <div

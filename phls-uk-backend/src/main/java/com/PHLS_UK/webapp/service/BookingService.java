@@ -46,7 +46,7 @@ public class BookingService {
             throw new RuntimeException("Only patients can create bookings");
         }
 
-        PatientProfile patient = patientProfileRepository.findByUser_Id(user.getId())
+        PatientProfile patient = patientProfileRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Patient profile not found"));
 
         AvailabilitySlot slot = availabilitySlotRepository.findById(request.getSlotId())

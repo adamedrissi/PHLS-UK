@@ -59,6 +59,8 @@ function LoginRegisterPage() {
   function handleGuestEntry() {
     localStorage.removeItem("phlsToken");
     localStorage.removeItem("phlsUserId");
+    localStorage.removeItem("phlsFullName");
+    localStorage.removeItem("phlsEmail");
     localStorage.setItem("phlsRole", "GUEST");
     localStorage.setItem("phlsLoggedIn", "false");
     navigate("/home");
@@ -78,6 +80,8 @@ function LoginRegisterPage() {
       localStorage.setItem("phlsToken", data.token);
       localStorage.setItem("phlsRole", data.role);
       localStorage.setItem("phlsUserId", String(data.userId));
+      localStorage.setItem("phlsFullName", data.fullName || "");
+      localStorage.setItem("phlsEmail", data.email || "");
       localStorage.setItem("phlsLoggedIn", "true");
 
       navigate("/home");
@@ -124,6 +128,8 @@ function LoginRegisterPage() {
       localStorage.setItem("phlsToken", loginData.token);
       localStorage.setItem("phlsRole", loginData.role);
       localStorage.setItem("phlsUserId", String(loginData.userId));
+      localStorage.setItem("phlsFullName", loginData.fullName || "");
+      localStorage.setItem("phlsEmail", loginData.email || "");
       localStorage.setItem("phlsLoggedIn", "true");
 
       navigate("/home");
