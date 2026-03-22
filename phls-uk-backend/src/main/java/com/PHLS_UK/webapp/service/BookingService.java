@@ -155,18 +155,60 @@ public class BookingService {
         );
     }
 
-    private BookingResponse mapBookingResponse(Booking booking) {
+        @Transactional(readOnly = true)
+        public List<BookingResponse> getProviderBookings(Long userId) {
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
+                if (user.getRole() != Role.PROVIDER) {
+                        throw new RuntimeException("Only providers can view provider bookings");
+                }
+
+                return bookingRepository.findByProvider_User_IdOrderByBookedAtDesc(userId)
+                        .stream()
+                        .map(this::mapBookingResponse)
+                        .toList();
+        }
+
+        private BookingResponse mapBookingResponse(Booking booking) {
+                return new BookingResponse(
+                        booking.getId(),
+                        booking.getSlot().getId(),
+                        booking.getProvider().getFullName(),
+                        booking.getClinic().getClinicName(),
+                        booking.getBookingStatus().name(),
+                        booking.getSlot().getStartTime(),
+                        booking.getSlot().getEndTime(),
+                        null
+                );
+        }
+
+        @Transactional
+        public BookingResponse cancelBookingAsProvider(Long bookingId, Long userId) {
+        Booking booking = bookingRepository.findByIdAndProvider_User_Id(bookingId, userId)
+            .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        if (booking.getBookingStatus() == BookingStatus.CANCELLED) {
+                throw new RuntimeException("Booking is already cancelled");
+        }
+
+        booking.setBookingStatus(BookingStatus.CANCELLED);
+        booking.getSlot().setStatus(SlotStatus.AVAILABLE);
+
+        availabilitySlotRepository.save(booking.getSlot());
+        Booking saved = bookingRepository.save(booking);
+
         return new BookingResponse(
-                booking.getId(),
-                booking.getSlot().getId(),
-                booking.getProvider().getFullName(),
-                booking.getClinic().getClinicName(),
-                booking.getBookingStatus().name(),
-                booking.getSlot().getStartTime(),
-                booking.getSlot().getEndTime(),
-                null
+            saved.getId(),
+            saved.getSlot().getId(),
+            saved.getProvider().getFullName(),
+            saved.getClinic().getClinicName(),
+            saved.getBookingStatus().name(),
+            saved.getSlot().getStartTime(),
+            saved.getSlot().getEndTime(),
+            "Booking cancelled by provider"
         );
-    }
+        }
 
     private String buildConfirmationMessage(User user, PatientProfile patient, AvailabilitySlot slot) {
         String preference = user.getNotificationPreference().name();

@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import { searchRankedSlots, getAllSpecialties, searchLocation } from "../services/slotService";
+import { useTranslation } from "react-i18next";
+import {
+  searchRankedSlots,
+  getAllSpecialties,
+  searchLocation,
+} from "../services/slotService";
 import SlotCard from "../components/SlotCard";
 
 function SearchBookingsPage() {
+  const { t } = useTranslation();
+
   const [slots, setSlots] = useState([]);
   const [specialty, setSpecialty] = useState("");
   const [specialties, setSpecialties] = useState([]);
@@ -40,7 +47,7 @@ function SearchBookingsPage() {
       setSpecialties(specialtyData);
       setSlots(slotData);
     } catch (err) {
-      setError(err.message || "Something went wrong");
+      setError(err.message || t("bookings.somethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -68,7 +75,7 @@ function SearchBookingsPage() {
 
       setSlots(data);
     } catch (err) {
-      setError(err.message || "Search failed");
+      setError(err.message || t("bookings.searchFailed"));
     } finally {
       setLoading(false);
     }
@@ -86,7 +93,7 @@ function SearchBookingsPage() {
       const results = await searchLocation(locationQuery.trim());
       setLocationResults(results);
     } catch (err) {
-      setError(err.message || "Location search failed");
+      setError(err.message || t("bookings.locationSearchFailed"));
     }
   }
 
@@ -109,13 +116,13 @@ function SearchBookingsPage() {
     setSelectedLocation(null);
     setRadiusMiles("10");
 
-      try {
-        setLoading(true);
-        setError("");
+    try {
+      setLoading(true);
+      setError("");
 
-        const [specialtyData, slotData] = await Promise.all([
-          getAllSpecialties(),
-          searchRankedSlots({
+      const [specialtyData, slotData] = await Promise.all([
+        getAllSpecialties(),
+        searchRankedSlots({
           rankingModel: "BASELINE",
           limit: 10,
         }),
@@ -124,7 +131,7 @@ function SearchBookingsPage() {
       setSpecialties(specialtyData);
       setSlots(slotData);
     } catch (err) {
-      setError(err.message || "Reset failed");
+      setError(err.message || t("bookings.resetFailed"));
     } finally {
       setLoading(false);
     }
@@ -138,10 +145,8 @@ function SearchBookingsPage() {
     <div className="page">
       <div className="page-container">
         <section className="page-hero">
-          <h1 className="page-title">Search Bookings</h1>
-          <p className="page-subtitle">
-            Find and rank available appointments by city, specialty, date, time, and budget.
-          </p>
+          <h1 className="page-title">{t("bookings.title")}</h1>
+          <p className="page-subtitle">{t("bookings.subtitle")}</p>
         </section>
 
         <section className="card" style={{ padding: "2rem", marginBottom: "2rem" }}>
@@ -158,11 +163,11 @@ function SearchBookingsPage() {
               }}
             >
               <div>
-                <label className="form-label">Location</label>
+                <label className="form-label">{t("bookings.location")}</label>
                 <div style={{ display: "flex", gap: "0.75rem" }}>
                   <input
                     type="text"
-                    placeholder="Enter UK town, city, postcode, or address"
+                    placeholder={t("bookings.locationPlaceholder")}
                     value={locationQuery}
                     onChange={(e) => {
                       setLocationQuery(e.target.value);
@@ -174,13 +179,13 @@ function SearchBookingsPage() {
                     className="secondary-btn"
                     onClick={handleLocationLookup}
                   >
-                    Find location
+                    {t("bookings.findLocation")}
                   </button>
                 </div>
 
                 {selectedLocation && (
                   <p style={{ marginTop: "0.5rem", color: "var(--text-soft)" }}>
-                    Selected: {selectedLocation.displayName}
+                    {t("bookings.selected")}: {selectedLocation.displayName}
                   </p>
                 )}
 
@@ -214,25 +219,25 @@ function SearchBookingsPage() {
               </div>
 
               <div>
-                <label className="form-label">Radius</label>
+                <label className="form-label">{t("bookings.radius")}</label>
                 <select
                   value={radiusMiles}
                   onChange={(e) => setRadiusMiles(e.target.value)}
                 >
-                  <option value="5">5 miles</option>
-                  <option value="10">10 miles</option>
-                  <option value="25">25 miles</option>
-                  <option value="50">50 miles</option>
+                  <option value="5">{t("bookings.radius5")}</option>
+                  <option value="10">{t("bookings.radius10")}</option>
+                  <option value="25">{t("bookings.radius25")}</option>
+                  <option value="50">{t("bookings.radius50")}</option>
                 </select>
               </div>
 
               <div>
-                <label className="form-label">Specialty</label>
+                <label className="form-label">{t("bookings.specialty")}</label>
                 <select
                   value={specialty}
                   onChange={(e) => setSpecialty(e.target.value)}
                 >
-                  <option value="">All specialties</option>
+                  <option value="">{t("bookings.allSpecialties")}</option>
                   {specialties.map((item) => (
                     <option key={item} value={item}>
                       {item}
@@ -242,30 +247,30 @@ function SearchBookingsPage() {
               </div>
 
               <div>
-                <label className="form-label">Maximum price (£)</label>
+                <label className="form-label">{t("bookings.maximumPrice")}</label>
                 <input
                   type="number"
-                  placeholder="Enter budget"
+                  placeholder={t("bookings.enterBudget")}
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="form-label">Minimum rating</label>
+                <label className="form-label">{t("bookings.minimumRating")}</label>
                 <select
                   value={minRating}
                   onChange={(e) => setMinRating(e.target.value)}
                 >
-                  <option value="">Any rating</option>
-                  <option value="3.5">3.5+</option>
-                  <option value="4.0">4.0+</option>
-                  <option value="4.5">4.5+</option>
+                  <option value="">{t("bookings.anyRating")}</option>
+                  <option value="3.5">{t("bookings.rating35")}</option>
+                  <option value="4.0">{t("bookings.rating40")}</option>
+                  <option value="4.5">{t("bookings.rating45")}</option>
                 </select>
               </div>
 
               <div>
-                <label className="form-label">Preferred date</label>
+                <label className="form-label">{t("bookings.preferredDate")}</label>
                 <input
                   type="date"
                   value={date}
@@ -274,31 +279,31 @@ function SearchBookingsPage() {
               </div>
 
               <div>
-                <label className="form-label">Preferred time</label>
+                <label className="form-label">{t("bookings.preferredTime")}</label>
                 <select
                   value={preferredTimeBucket}
                   onChange={(e) => setPreferredTimeBucket(e.target.value)}
                 >
-                  <option value="">Any time</option>
-                  <option value="MORNING">Morning</option>
-                  <option value="AFTERNOON">Afternoon</option>
-                  <option value="EVENING">Evening</option>
+                  <option value="">{t("bookings.anyTime")}</option>
+                  <option value="MORNING">{t("bookings.morning")}</option>
+                  <option value="AFTERNOON">{t("bookings.afternoon")}</option>
+                  <option value="EVENING">{t("bookings.evening")}</option>
                 </select>
               </div>
 
               <div>
-                <label className="form-label">Ranking model</label>
+                <label className="form-label">{t("bookings.rankingModel")}</label>
                 <select
                   value={rankingModel}
                   onChange={(e) => setRankingModel(e.target.value)}
                 >
-                  <option value="BASELINE">Baseline weighted</option>
-                  <option value="CONTENT">Content-based similarity</option>
+                  <option value="BASELINE">{t("bookings.baselineWeighted")}</option>
+                  <option value="CONTENT">{t("bookings.contentBasedSimilarity")}</option>
                 </select>
               </div>
 
               <div>
-                <label className="form-label">Results limit</label>
+                <label className="form-label">{t("bookings.resultsLimit")}</label>
                 <select
                   value={limit}
                   onChange={(e) => setLimit(Number(e.target.value))}
@@ -320,10 +325,10 @@ function SearchBookingsPage() {
               }}
             >
               <button type="submit" className="primary-btn">
-                Search
+                {t("bookings.search")}
               </button>
               <button type="button" className="secondary-btn" onClick={handleReset}>
-                Reset
+                {t("bookings.reset")}
               </button>
             </div>
           </form>
@@ -332,11 +337,11 @@ function SearchBookingsPage() {
         {!loading && !error && slots.length > 0 && (
           <div className="text-center" style={{ marginBottom: "1rem" }}>
             <p>
-              Showing {slots.length} ranked result{slots.length !== 1 ? "s" : ""} using{" "}
+              {t("bookings.showing")} {slots.length} {slots.length !== 1 ? t("bookings.resultsPlural") : t("bookings.resultSingular")} {t("bookings.using")}{" "}
               <strong>
                 {rankingModel === "BASELINE"
-                  ? "Baseline weighted ranking"
-                  : "Content-based similarity"}
+                  ? t("bookings.baselineWeightedRanking")
+                  : t("bookings.contentBasedSimilarity")}
               </strong>
             </p>
           </div>
@@ -344,7 +349,7 @@ function SearchBookingsPage() {
 
         {loading && (
           <div className="text-center">
-            <p>Loading ranked slots...</p>
+            <p>{t("bookings.loadingRankedSlots")}</p>
           </div>
         )}
 
@@ -359,7 +364,7 @@ function SearchBookingsPage() {
 
         {!loading && !error && slots.length === 0 && (
           <div className="text-center">
-            <p>No available bookings found.</p>
+            <p>{t("bookings.noAvailableBookings")}</p>
           </div>
         )}
 

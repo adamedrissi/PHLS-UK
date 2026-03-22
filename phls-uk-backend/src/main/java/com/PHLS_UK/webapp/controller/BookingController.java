@@ -40,4 +40,15 @@ public class BookingController {
                                              @RequestBody RescheduleBookingRequest request) {
         return bookingService.rescheduleBooking(bookingId, request);
     }
+
+    @GetMapping("/provider")
+    public List<BookingResponse> getProviderBookings(@RequestParam Long userId) {
+        return bookingService.getProviderBookings(userId);
+    }
+
+    @PutMapping("/{bookingId}/provider-cancel")
+    public BookingResponse cancelBookingAsProvider(@PathVariable Long bookingId,
+                                               @RequestParam Long userId) {
+        return bookingService.cancelBookingAsProvider(bookingId, userId);
+    }
 }

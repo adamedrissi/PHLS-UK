@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   loginUser,
   registerPatient,
@@ -7,18 +8,11 @@ import {
 } from "../services/authService";
 import logo from "../assets/logo.png";
 import panelBg from "../assets/logoBackground.png";
-import en from '../assets/en.png';
-import cy from '../assets/cy.png';
-import es from '../assets/es.png';
-import pa from '../assets/pa.png';
-import pl from '../assets/pl.png';
-import pt from '../assets/pt.png';
-import ro from '../assets/ro.png';
-import ur from '../assets/ur.png';
-//import AddressAutocomplete from '../components/AddressAutocomplete';
+import LanguageSelector from "../components/LanguageSelector";
 
 function LoginRegisterPage() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const [mode, setMode] = useState("login");
   const [userType, setUserType] = useState("PATIENT");
@@ -41,13 +35,17 @@ function LoginRegisterPage() {
   const [error, setError] = useState("");
 
   const [theme, setTheme] = useState(localStorage.getItem("phlsTheme") || "light");
-  const [language, setLanguage] = useState(localStorage.getItem("phlsLanguage") || "English");
+  const [language, setLanguage] = useState(localStorage.getItem("phlsLanguage") || "en");
 
   useEffect(() => {
     localStorage.setItem("phlsTheme", theme);
-    localStorage.setItem("phlsLanguage", language);
     document.body.classList.toggle("dark-theme", theme === "dark");
-  }, [theme, language]);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem("phlsLanguage", language);
+    i18n.changeLanguage(language);
+  }, [language, i18n]);
 
   useEffect(() => {
     const token = localStorage.getItem("phlsToken");
@@ -86,7 +84,7 @@ function LoginRegisterPage() {
 
       navigate("/home");
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message || t("loginPage.loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -97,7 +95,7 @@ function LoginRegisterPage() {
     setError("");
 
     if (registerForm.password !== registerForm.confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("loginPage.passwordsDoNotMatch"));
       return;
     }
 
@@ -134,7 +132,7 @@ function LoginRegisterPage() {
 
       navigate("/home");
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(err.message || t("loginPage.registrationFailed"));
     } finally {
       setLoading(false);
     }
@@ -157,7 +155,7 @@ function LoginRegisterPage() {
           maxWidth: "1120px",
           display: "grid",
           gridTemplateColumns: "1.1fr 0.9fr",
-          overflow: "hidden",
+          overflow: "visible",
         }}
       >
         <div
@@ -173,11 +171,13 @@ function LoginRegisterPage() {
             backgroundSize: "auto 100%",
           }}
         >
-          <div style={{
+          <div
+            style={{
               marginBottom: "1.5rem",
               display: "flex",
               justifyContent: "center",
-            }}>
+            }}
+          >
             <img
               src={logo}
               alt="PHLS-UK"
@@ -190,12 +190,11 @@ function LoginRegisterPage() {
           </div>
 
           <h1 style={{ fontSize: "clamp(2.2rem, 4vw, 3.5rem)", marginBottom: "1rem" }}>
-            Search and book private healthcare with confidence
+            {t("loginPage.heroTitle")}
           </h1>
 
           <p style={{ fontSize: "1.05rem", maxWidth: "540px", opacity: 0.96 }}>
-            Compare services, discover providers, and manage appointments through
-            a cleaner and more accessible healthcare platform.
+            {t("loginPage.heroSubtitle")}
           </p>
 
           <div
@@ -213,6 +212,8 @@ function LoginRegisterPage() {
                 background: "rgba(0, 0, 0, 0.35)",
                 border: "1px solid rgba(255,255,255,0.14)",
                 backdropFilter: "blur(6px)",
+                position: "relative",
+                zIndex: 20,
               }}
             >
               <label
@@ -223,26 +224,13 @@ function LoginRegisterPage() {
                   color: "#ffffff",
                 }}
               >
-                Language
+                {t("common.language")}
               </label>
-              <select
+
+              <LanguageSelector
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                style={{
-                  background: "rgba(255,255,255,0.92)",
-                  color: "#111827",
-                  border: "1px solid rgba(255,255,255,0.25)",
-                }}
-              >
-                <option>English</option>
-                <option>Welsh/Cymru</option>
-                <option>Spanish</option>
-                <option>Panjabi</option>
-                <option>Polish</option>
-                <option>Portuguese</option>
-                <option>Romanian</option>
-                <option>Urdu</option>
-              </select>
+                onChange={setLanguage}
+              />
             </div>
 
             <div
@@ -261,7 +249,7 @@ function LoginRegisterPage() {
                   color: "#ffffff",
                 }}
               >
-                Theme
+                {t("common.theme")}
               </p>
 
               <div
@@ -280,7 +268,7 @@ function LoginRegisterPage() {
                     border: "1px solid rgba(255,255,255,0.2)",
                   }}
                 >
-                  Light
+                  {t("common.light")}
                 </button>
 
                 <button
@@ -292,7 +280,7 @@ function LoginRegisterPage() {
                     border: "1px solid rgba(255,255,255,0.2)",
                   }}
                 >
-                  Dark
+                  {t("common.dark")}
                 </button>
               </div>
             </div>
@@ -319,7 +307,7 @@ function LoginRegisterPage() {
                   minWidth: "140px",
                 }}
               >
-                Patient FAQs
+                {t("common.patientFaqs")}
               </Link>
 
               <Link
@@ -337,7 +325,7 @@ function LoginRegisterPage() {
                   minWidth: "140px",
                 }}
               >
-                Provider FAQs
+                {t("common.providerFaqs")}
               </Link>
             </div>
           </div>
@@ -353,10 +341,10 @@ function LoginRegisterPage() {
         >
           <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
             <h2 style={{ marginBottom: "0.5rem" }}>
-              {mode === "login" ? "Welcome back" : "Create your account"}
+              {mode === "login" ? t("loginPage.welcomeBack") : t("loginPage.createAccount")}
             </h2>
             <p style={{ color: "var(--text-soft)", marginBottom: 0 }}>
-              Access PHLS-UK as a patient or provider
+              {t("loginPage.accessText")}
             </p>
           </div>
 
@@ -373,14 +361,14 @@ function LoginRegisterPage() {
               onClick={() => setMode("login")}
               type="button"
             >
-              Login
+              {t("common.login")}
             </button>
             <button
               className={mode === "register" ? "primary-btn" : "secondary-btn"}
               onClick={() => setMode("register")}
               type="button"
             >
-              Register
+              {t("common.register")}
             </button>
           </div>
 
@@ -397,14 +385,14 @@ function LoginRegisterPage() {
               onClick={() => setUserType("PATIENT")}
               type="button"
             >
-              Patient
+              {t("common.patient")}
             </button>
             <button
               className={userType === "PROVIDER" ? "primary-btn" : "secondary-btn"}
               onClick={() => setUserType("PROVIDER")}
               type="button"
             >
-              Provider
+              {t("common.provider")}
             </button>
           </div>
 
@@ -417,39 +405,39 @@ function LoginRegisterPage() {
           {mode === "login" ? (
             <form onSubmit={handleLoginSubmit} className="form-grid">
               <div>
-                <label className="form-label">Email</label>
+                <label className="form-label">{t("loginPage.email")}</label>
                 <input
                   type="email"
                   value={loginForm.email}
                   onChange={(e) =>
                     setLoginForm({ ...loginForm, email: e.target.value })
                   }
-                  placeholder="Enter your email"
+                  placeholder={t("loginPage.enterEmail")}
                   required
                 />
               </div>
 
               <div>
-                <label className="form-label">Password</label>
+                <label className="form-label">{t("loginPage.password")}</label>
                 <input
                   type="password"
                   value={loginForm.password}
                   onChange={(e) =>
                     setLoginForm({ ...loginForm, password: e.target.value })
                   }
-                  placeholder="Enter your password"
+                  placeholder={t("loginPage.enterPassword")}
                   required
                 />
               </div>
 
               <button type="submit" className="primary-btn" disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
+                {loading ? t("loginPage.loggingIn") : t("common.login")}
               </button>
             </form>
           ) : (
             <form onSubmit={handleRegisterSubmit} className="form-grid">
               <div>
-                <label className="form-label">Full name</label>
+                <label className="form-label">{t("loginPage.fullName")}</label>
                 <input
                   type="text"
                   value={registerForm.fullName}
@@ -461,7 +449,7 @@ function LoginRegisterPage() {
               </div>
 
               <div>
-                <label className="form-label">Email</label>
+                <label className="form-label">{t("loginPage.email")}</label>
                 <input
                   type="email"
                   value={registerForm.email}
@@ -474,7 +462,7 @@ function LoginRegisterPage() {
 
               {userType === "PATIENT" && (
                 <div>
-                  <label className="form-label">Phone number</label>
+                  <label className="form-label">{t("loginPage.phoneNumber")}</label>
                   <input
                     type="text"
                     value={registerForm.phoneNumber}
@@ -491,7 +479,7 @@ function LoginRegisterPage() {
 
               {userType === "PROVIDER" && (
                 <div>
-                  <label className="form-label">Clinic ID</label>
+                  <label className="form-label">{t("loginPage.clinicId")}</label>
                   <input
                     type="number"
                     value={registerForm.clinicId}
@@ -501,14 +489,14 @@ function LoginRegisterPage() {
                         clinicId: e.target.value,
                       })
                     }
-                    placeholder="Enter existing clinic ID"
+                    placeholder={t("loginPage.enterClinicId")}
                     required
                   />
                 </div>
               )}
 
               <div>
-                <label className="form-label">Password</label>
+                <label className="form-label">{t("loginPage.password")}</label>
                 <input
                   type="password"
                   value={registerForm.password}
@@ -520,7 +508,7 @@ function LoginRegisterPage() {
               </div>
 
               <div>
-                <label className="form-label">Confirm password</label>
+                <label className="form-label">{t("loginPage.confirmPassword")}</label>
                 <input
                   type="password"
                   value={registerForm.confirmPassword}
@@ -535,7 +523,7 @@ function LoginRegisterPage() {
               </div>
 
               <button type="submit" className="primary-btn" disabled={loading}>
-                {loading ? "Registering..." : "Register"}
+                {loading ? t("loginPage.registering") : t("common.register")}
               </button>
             </form>
           )}
@@ -547,7 +535,7 @@ function LoginRegisterPage() {
               style={{ width: "100%" }}
               type="button"
             >
-              Enter as Guest
+              {t("loginPage.enterAsGuest")}
             </button>
           </div>
         </div>

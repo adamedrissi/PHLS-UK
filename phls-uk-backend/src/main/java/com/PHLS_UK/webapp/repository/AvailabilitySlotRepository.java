@@ -19,4 +19,14 @@ public interface AvailabilitySlotRepository extends JpaRepository<AvailabilitySl
             SlotStatus status,
             LocalDateTime startTime
     );
+
+    List<AvailabilitySlot> findByProvider_User_IdOrderByStartTimeAsc(Long userId);
+
+    java.util.Optional<AvailabilitySlot> findByIdAndProvider_User_Id(Long slotId, Long userId);
+
+    boolean existsByProvider_IdAndStartTimeLessThanAndEndTimeGreaterThan(
+            Long providerId,
+            LocalDateTime endTime,
+            LocalDateTime startTime
+    );
 }

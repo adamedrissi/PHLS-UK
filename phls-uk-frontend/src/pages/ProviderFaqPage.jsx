@@ -1,44 +1,40 @@
+import { useTranslation } from "react-i18next";
+
 function ProviderFaqPage() {
+  const { t } = useTranslation();
+
   const faqs = [
     {
-      question: "What is PHLS-UK for providers?",
-      answer:
-        "PHLS-UK helps providers present healthcare services online so patients can search, compare, and access appointment availability more easily.",
+      question: t("providerFaq.q1.question"),
+      answer: t("providerFaq.q1.answer"),
     },
     {
-      question: "How do I register as a provider?",
-      answer:
-        "On the login and registration page, choose Register and then select the Provider option to create a provider account.",
+      question: t("providerFaq.q2.question"),
+      answer: t("providerFaq.q2.answer"),
     },
     {
-      question: "Why do I need a clinic ID when registering?",
-      answer:
-        "The clinic ID connects your provider account to an existing clinic record in the platform.",
+      question: t("providerFaq.q3.question"),
+      answer: t("providerFaq.q3.answer"),
     },
     {
-      question: "Can providers search the platform too?",
-      answer:
-        "Yes. Providers can still browse platform content, depending on the features available to their account role.",
+      question: t("providerFaq.q4.question"),
+      answer: t("providerFaq.q4.answer"),
     },
     {
-      question: "Can providers book appointments?",
-      answer:
-        "No. Booking actions are intended for patient accounts. Provider accounts are designed for service and availability management.",
+      question: t("providerFaq.q5.question"),
+      answer: t("providerFaq.q5.answer"),
     },
     {
-      question: "What should I do if my clinic information is incorrect?",
-      answer:
-        "If your linked clinic information is incorrect, you should contact platform support so the clinic data can be reviewed and updated.",
+      question: t("providerFaq.q6.question"),
+      answer: t("providerFaq.q6.answer"),
     },
     {
-      question: "Can I use PHLS-UK in dark mode?",
-      answer:
-        "Yes. Providers can change the platform appearance from the Settings page.",
+      question: t("providerFaq.q7.question"),
+      answer: t("providerFaq.q7.answer"),
     },
     {
-      question: "Where can I get help with provider access issues?",
-      answer:
-        "Use the support email shown in the footer for help with registration, access, or platform-related issues.",
+      question: t("providerFaq.q8.question"),
+      answer: t("providerFaq.q8.answer"),
     },
   ];
 
@@ -46,9 +42,9 @@ function ProviderFaqPage() {
     <div className="page">
       <div className="page-container">
         <section className="page-hero">
-          <h1 className="page-title">Provider FAQs</h1>
+          <h1 className="page-title">{t("providerFaq.title")}</h1>
           <p className="page-subtitle">
-            Common questions for providers using PHLS-UK.
+            {t("providerFaq.subtitle")}
           </p>
         </section>
 

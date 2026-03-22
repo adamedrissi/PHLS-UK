@@ -1,27 +1,45 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "../components/LanguageSelector";
 
 function SettingsPage() {
+  const { t, i18n } = useTranslation();
+
   const [theme, setTheme] = useState(localStorage.getItem("phlsTheme") || "light");
-  const [language, setLanguage] = useState(localStorage.getItem("phlsLanguage") || "English");
+  const [language, setLanguage] = useState(localStorage.getItem("phlsLanguage") || "en");
   const [notificationPreference, setNotificationPreference] = useState(
     localStorage.getItem("phlsNotificationPreference") || "BOTH"
   );
 
   useEffect(() => {
     localStorage.setItem("phlsTheme", theme);
-    localStorage.setItem("phlsLanguage", language);
-    localStorage.setItem("phlsNotificationPreference", notificationPreference);
     document.body.classList.toggle("dark-theme", theme === "dark");
-  }, [theme, language, notificationPreference]);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem("phlsLanguage", language);
+    i18n.changeLanguage(language);
+  }, [language, i18n]);
+
+  useEffect(() => {
+    localStorage.setItem("phlsNotificationPreference", notificationPreference);
+  }, [notificationPreference]);
+
+  const notificationLabel =
+    notificationPreference === "NONE"
+      ? t("settings.notifications.none")
+      : notificationPreference === "EMAIL"
+      ? t("settings.notifications.email")
+      : notificationPreference === "PHONE"
+      ? t("settings.notifications.phone")
+      : t("settings.notifications.both");
 
   return (
     <div className="page">
       <div className="page-container">
         <section className="page-hero">
-          <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">
-            Personalise your PHLS-UK experience with theme, language, and notification preferences.
-          </p>
+          <h1 className="page-title">{t("settings.title")}</h1>
+          <p className="page-subtitle">{t("settings.subtitle")}</p>
         </section>
 
         <section
@@ -39,9 +57,9 @@ function SettingsPage() {
             }}
           >
             <div>
-              <h2 style={{ marginBottom: "0.75rem" }}>Theme</h2>
+              <h2 style={{ marginBottom: "0.75rem" }}>{t("common.theme")}</h2>
               <p style={{ color: "var(--text-soft)", marginBottom: "1rem" }}>
-                Choose how the platform looks across the main pages.
+                {t("settings.themeDescription")}
               </p>
 
               <div
@@ -56,7 +74,7 @@ function SettingsPage() {
                   className={theme === "light" ? "primary-btn" : "secondary-btn"}
                   onClick={() => setTheme("light")}
                 >
-                  Light Mode
+                  {t("settings.lightMode")}
                 </button>
 
                 <button
@@ -64,36 +82,27 @@ function SettingsPage() {
                   className={theme === "dark" ? "primary-btn" : "secondary-btn"}
                   onClick={() => setTheme("dark")}
                 >
-                  Dark Mode
+                  {t("settings.darkMode")}
                 </button>
               </div>
             </div>
 
             <div>
-              <h2 style={{ marginBottom: "0.75rem" }}>Language</h2>
+              <h2 style={{ marginBottom: "0.75rem" }}>{t("common.language")}</h2>
               <p style={{ color: "var(--text-soft)", marginBottom: "1rem" }}>
-                Select your preferred language for the interface.
+                {t("settings.languageDescription")}
               </p>
 
-              <select
+              <LanguageSelector
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-              >
-                <option>English</option>
-                <option>Welsh/Cymru</option>
-                <option>Spanish</option>
-                <option>Panjabi</option>
-                <option>Polish</option>
-                <option>Portuguese</option>
-                <option>Romanian</option>
-                <option>Urdu</option>
-              </select>
+                onChange={setLanguage}
+              />
             </div>
 
             <div>
-              <h2 style={{ marginBottom: "0.75rem" }}>Notifications</h2>
+              <h2 style={{ marginBottom: "0.75rem" }}>{t("settings.notifications.title")}</h2>
               <p style={{ color: "var(--text-soft)", marginBottom: "1rem" }}>
-                Choose how you would like to receive booking and platform notifications.
+                {t("settings.notifications.description")}
               </p>
 
               <div
@@ -119,7 +128,7 @@ function SettingsPage() {
                     }
                     onClick={() => setNotificationPreference("NONE")}
                   >
-                    None
+                    {t("settings.notifications.none")}
                   </button>
 
                   <button
@@ -129,7 +138,7 @@ function SettingsPage() {
                     }
                     onClick={() => setNotificationPreference("EMAIL")}
                   >
-                    Email
+                    {t("settings.notifications.email")}
                   </button>
 
                   <button
@@ -139,7 +148,7 @@ function SettingsPage() {
                     }
                     onClick={() => setNotificationPreference("PHONE")}
                   >
-                    Phone
+                    {t("settings.notifications.phone")}
                   </button>
 
                   <button
@@ -149,7 +158,7 @@ function SettingsPage() {
                     }
                     onClick={() => setNotificationPreference("BOTH")}
                   >
-                    Both
+                    {t("settings.notifications.both")}
                   </button>
                 </div>
               </div>
@@ -164,7 +173,7 @@ function SettingsPage() {
                 boxShadow: "none",
               }}
             >
-              <h3 style={{ marginBottom: "0.75rem" }}>Current preferences</h3>
+              <h3 style={{ marginBottom: "0.75rem" }}>{t("settings.currentPreferences")}</h3>
               <div
                 style={{
                   display: "flex",
@@ -172,10 +181,14 @@ function SettingsPage() {
                   gap: "0.75rem",
                 }}
               >
-                <span className="status-pill">Theme: {theme}</span>
-                <span className="status-pill">Language: {language}</span>
                 <span className="status-pill">
-                  Notifications: {notificationPreference}
+                  {t("common.theme")}: {theme === "dark" ? t("common.dark") : t("common.light")}
+                </span>
+                <span className="status-pill">
+                  {t("common.language")}: {t(`languages.${language}`)}
+                </span>
+                <span className="status-pill">
+                  {t("settings.notifications.title")}: {notificationLabel}
                 </span>
               </div>
             </div>

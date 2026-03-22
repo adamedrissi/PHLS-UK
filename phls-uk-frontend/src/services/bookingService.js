@@ -60,3 +60,28 @@ export async function rescheduleBooking(bookingId, payload) {
 
   return data;
 }
+
+export async function getProviderBookings(userId) {
+  const response = await fetch(`${API_BASE_URL}/provider?userId=${userId}`);
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Failed to load provider bookings");
+  }
+
+  return data;
+}
+
+export async function cancelBookingAsProvider(bookingId, userId) {
+  const response = await fetch(`${API_BASE_URL}/${bookingId}/provider-cancel?userId=${userId}`, {
+    method: "PUT",
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Failed to cancel booking");
+  }
+
+  return data;
+}

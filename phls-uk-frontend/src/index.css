@@ -548,3 +548,7 @@ html {
     grid-template-columns: 1fr !important;
   }
 }
+
+.language-option-btn:hover {
+  background: rgba(15, 61, 145, 0.08);
+}

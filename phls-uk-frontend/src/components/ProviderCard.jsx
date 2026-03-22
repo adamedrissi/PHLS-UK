@@ -1,4 +1,8 @@
+import { useTranslation } from "react-i18next";
+
 function ProviderCard({ provider }) {
+  const { t } = useTranslation();
+
   return (
     <div
       className="card"
@@ -26,7 +30,7 @@ function ProviderCard({ provider }) {
         </div>
 
         <span className="status-pill">
-          Rating: {provider.clinicRatingAverage ?? "N/A"}
+          {t("providerCard.rating")}: {provider.clinicRatingAverage ?? t("slotCard.notAvailable")}
         </span>
       </div>
 
@@ -37,15 +41,19 @@ function ProviderCard({ provider }) {
           color: "var(--text-soft)",
         }}
       >
-        <p><strong style={{ color: "var(--text)" }}>City:</strong> {provider.city}</p>
-        <p><strong style={{ color: "var(--text)" }}>Postcode:</strong> {provider.postcode}</p>
         <p>
-          <strong style={{ color: "var(--text)" }}>Price from:</strong> £
+          <strong style={{ color: "var(--text)" }}>{t("slotCard.city")}:</strong> {provider.city}
+        </p>
+        <p>
+          <strong style={{ color: "var(--text)" }}>{t("slotCard.postcode")}:</strong> {provider.postcode}
+        </p>
+        <p>
+          <strong style={{ color: "var(--text)" }}>{t("providerCard.priceFrom")}:</strong> £
           {provider.consultationPriceFrom}
         </p>
         <p>
-          <strong style={{ color: "var(--text)" }}>Specialties:</strong>{" "}
-          {provider.specialties?.length ? provider.specialties.join(", ") : "Not listed"}
+          <strong style={{ color: "var(--text)" }}>{t("slotCard.specialties")}:</strong>{" "}
+          {provider.specialties?.length ? provider.specialties.join(", ") : t("slotCard.notListed")}
         </p>
       </div>
     </div>

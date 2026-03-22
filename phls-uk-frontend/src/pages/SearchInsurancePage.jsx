@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function SearchInsurancePage() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
 
   const insuranceProviders = [
@@ -60,10 +62,8 @@ function SearchInsurancePage() {
     <div className="page">
       <div className="page-container">
         <section className="page-hero">
-          <h1 className="page-title">Medical Insurance Search</h1>
-          <p className="page-subtitle">
-            Browse and compare private medical insurance providers in a cleaner, simpler layout.
-          </p>
+          <h1 className="page-title">{t("insurance.title")}</h1>
+          <p className="page-subtitle">{t("insurance.subtitle")}</p>
         </section>
 
         <section
@@ -75,10 +75,10 @@ function SearchInsurancePage() {
           }}
         >
           <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-            <label className="form-label">Search insurance providers</label>
+            <label className="form-label">{t("insurance.searchLabel")}</label>
             <input
               type="text"
-              placeholder="Type provider name..."
+              placeholder={t("insurance.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -95,7 +95,7 @@ function SearchInsurancePage() {
         >
           {filteredProviders.length === 0 ? (
             <div className="card" style={{ padding: "1.5rem", textAlign: "center" }}>
-              <p style={{ marginBottom: 0 }}>No insurance providers found.</p>
+              <p style={{ marginBottom: 0 }}>{t("insurance.noResults")}</p>
             </div>
           ) : (
             filteredProviders.map((provider) => (
@@ -134,7 +134,7 @@ function SearchInsurancePage() {
                         marginBottom: "0.9rem",
                       }}
                     >
-                      From {provider.priceFrom}
+                      {t("insurance.from")} {provider.priceFrom}
                     </p>
                     <a
                       href={provider.quoteLink}
@@ -151,7 +151,7 @@ function SearchInsurancePage() {
                         padding: "0.85rem 1.2rem",
                       }}
                     >
-                      Get a Quote ↗
+                      {t("insurance.getQuote")}
                     </a>
                   </div>
                 </div>

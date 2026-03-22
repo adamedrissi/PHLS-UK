@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import logo from "../assets/logotype.png";
 import headerBg from "../assets/logoBackground2.png";
 import headerBg2 from "../assets/logoBackground3.png";
@@ -7,6 +8,7 @@ import footerImage from "../assets/logo.png";
 
 function AppShell() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const role = localStorage.getItem("phlsRole") || "GUEST";
   const token = localStorage.getItem("phlsToken");
@@ -51,10 +53,10 @@ function AppShell() {
               type="button"
               className="shell-scroll-btn"
               onClick={scrollToFooter}
-              aria-label="Scroll to footer"
-              title="Scroll to footer"
+              aria-label={t("common.scrollToBottom")}
+              title={t("common.scrollToBottom")}
             >
-              ↓ Scroll to Bottom
+              {t("common.scrollToBottom")}
             </button>
           </div>
 
@@ -64,7 +66,7 @@ function AppShell() {
 
           <div className="shell-header-actions">
             <button className="danger-btn" onClick={handleLogout}>
-              {token ? "Log Out" : "Exit Guest"}
+              {token ? t("common.logout") : t("common.exitGuest")}
             </button>
           </div>
         </div>
@@ -73,31 +75,31 @@ function AppShell() {
       <div className="shell-body">
         <aside className="shell-sidebar card">
           <nav className="shell-nav">
-            <NavItem to="/home" label="Home" />
+            <NavItem to="/home" label={t("common.home")} />
 
             {role === "GUEST" && (
               <>
-                <NavItem to="/searchbookings" label="Search Bookings" />
-                <NavItem to="/searchinsurance" label="Search Insurance" />
-                <NavItem to="/settings" label="Settings" />
+                <NavItem to="/searchbookings" label={t("common.searchBookings")} />
+                <NavItem to="/searchinsurance" label={t("common.searchInsurance")} />
+                <NavItem to="/settings" label={t("common.settings")} />
               </>
             )}
 
             {role === "PATIENT" && (
               <>
-                <NavItem to="/searchbookings" label="Search Bookings" />
-                <NavItem to="/managebookings" label="Manage Bookings" />
-                <NavItem to="/searchinsurance" label="Search Insurance" />
-                <NavItem to="/manageprofile" label="Manage Profile" />
-                <NavItem to="/settings" label="Settings" />
+                <NavItem to="/searchbookings" label={t("common.searchBookings")} />
+                <NavItem to="/managebookings" label={t("common.manageBookings")} />
+                <NavItem to="/searchinsurance" label={t("common.searchInsurance")} />
+                <NavItem to="/manageprofile" label={t("common.manageProfile")} />
+                <NavItem to="/settings" label={t("common.settings")} />
               </>
             )}
 
             {role === "PROVIDER" && (
               <>
-                <NavItem to="/managebookings" label="Manage Bookings" />
-                <NavItem to="/manageprofile" label="Manage Profile" />
-                <NavItem to="/settings" label="Settings" />
+                <NavItem to="/managebookings" label={t("common.manageBookings")} />
+                <NavItem to="/manageprofile" label={t("common.manageProfile")} />
+                <NavItem to="/settings" label={t("common.settings")} />
               </>
             )}
           </nav>
@@ -108,51 +110,47 @@ function AppShell() {
         </main>
       </div>
 
-  <footer
-    id="app-footer"
-    className="shell-footer shell-footer-image"
-    style={{ backgroundImage: `url(${headerBg2})` }}
-  >
-    <div className="shell-footer-inner">
-      <div className="shell-footer-top-action">
-        <button
-          type="button"
-          className="shell-scroll-btn"
-          onClick={scrollToTop}
-          aria-label="Scroll to top"
-          title="Scroll to top"
-        >
-          ↑ Back to top
-        </button>
-      </div>
+      <footer
+        id="app-footer"
+        className="shell-footer shell-footer-image"
+        style={{ backgroundImage: `url(${headerBg2})` }}
+      >
+        <div className="shell-footer-inner">
+          <div className="shell-footer-top-action">
+            <button
+              type="button"
+              className="shell-scroll-btn"
+              onClick={scrollToTop}
+              aria-label={t("common.backToTop")}
+              title={t("common.backToTop")}
+            >
+              {t("common.backToTop")}
+            </button>
+          </div>
 
-      <div className="shell-footer-links">
-        <Link to="/faq-patient" className="shell-footer-link">
-          Patient FAQs
-        </Link>
-        <Link to="/faq-provider" className="shell-footer-link">
-          Provider FAQs
-        </Link>
-      </div>
+          <div className="shell-footer-links">
+            <Link to="/faq-patient" className="shell-footer-link">
+              {t("common.patientFaqs")}
+            </Link>
+            <Link to="/faq-provider" className="shell-footer-link">
+              {t("common.providerFaqs")}
+            </Link>
+          </div>
 
-      <div className="shell-footer-text-wrap">
-        <p className="shell-footer-pill">
-          © 2026 PHLS-UK. Private Healthcare Lookup Service.
-        </p>
-        <p className="shell-footer-pill">
-          Contact us at: contact.phlsuk@gmail.com
-        </p>
-      </div>
+          <div className="shell-footer-text-wrap">
+            <p className="shell-footer-pill">{t("footer.copyright")}</p>
+            <p className="shell-footer-pill">{t("footer.contact")}</p>
+          </div>
 
-      <div className="shell-footer-image-wrap">
-        <img
-          src={footerImage}
-          alt="PHLS-UK footer emblem"
-          className="shell-footer-logo"
-        />
-      </div>
-    </div>
-  </footer>
+          <div className="shell-footer-image-wrap">
+            <img
+              src={footerImage}
+              alt="PHLS-UK footer emblem"
+              className="shell-footer-logo"
+            />
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

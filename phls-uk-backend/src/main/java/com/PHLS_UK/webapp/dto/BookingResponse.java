@@ -12,6 +12,8 @@ public class BookingResponse {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String message;
+    //private String patientName;
+    //private String notes;
 
     public BookingResponse() {
     }

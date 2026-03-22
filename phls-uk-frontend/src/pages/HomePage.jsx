@@ -1,22 +1,23 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function HomePage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const token = localStorage.getItem("phlsToken");
   const role = localStorage.getItem("phlsRole") || "GUEST";
-  const language = localStorage.getItem("phlsLanguage") || "English";
+  const language = localStorage.getItem("phlsLanguage") || "en";
   const theme = localStorage.getItem("phlsTheme") || "light";
+
+  const languageLabel = t(`languages.${language}`);
 
   return (
     <div className="page">
       <div className="page-container">
         <section className="page-hero">
-          <h1 className="page-title">Welcome to PHLS-UK</h1>
-          <p className="page-subtitle">
-            Search, compare and access private healthcare services in one place.
-            Designed to make booking and provider discovery simpler, faster and clearer.
-          </p>
+          <h1 className="page-title">{t("home.title")}</h1>
+          <p className="page-subtitle">{t("home.subtitle")}</p>
         </section>
 
         <section
@@ -36,16 +37,16 @@ function HomePage() {
             }}
           >
             <div className="status-pill" style={{ justifyContent: "center", padding: "1rem" }}>
-              Role: {role}
+              {t("home.role")}: {role}
             </div>
             <div className="status-pill" style={{ justifyContent: "center", padding: "1rem" }}>
-              Authenticated: {token ? "Yes" : "No"}
+              {t("home.authenticated")}: {token ? t("common.yes") : t("common.no")}
             </div>
             <div className="status-pill" style={{ justifyContent: "center", padding: "1rem" }}>
-              Language: {language}
+              {t("home.language")}: {languageLabel}
             </div>
             <div className="status-pill" style={{ justifyContent: "center", padding: "1rem" }}>
-              Theme: {theme}
+              {t("home.theme")}: {theme}
             </div>
           </div>
         </section>
@@ -59,7 +60,7 @@ function HomePage() {
           }}
         >
           <h2 className="text-center" style={{ marginBottom: "1.5rem" }}>
-            Quick actions
+            {t("common.quickActions")}
           </h2>
 
           <div
@@ -69,33 +70,32 @@ function HomePage() {
               gap: "1rem",
             }}
           >
-
             {(role === "PATIENT" || role === "GUEST") && (
               <button className="primary-btn" onClick={() => navigate("/searchbookings")}>
-                Search Bookings
+                {t("common.searchBookings")}
               </button>
             )}
 
             {(role === "PATIENT" || role === "PROVIDER") && (
               <button className="secondary-btn" onClick={() => navigate("/managebookings")}>
-                Manage Bookings
-              </button>
-            )}
-            
-            {(role === "PATIENT" || role === "GUEST") && (
-              <button className="secondary-btn" onClick={() => navigate("/searchinsurance")}>
-                Search Insurance
+                {t("common.manageBookings")}
               </button>
             )}
 
-            {(role === "PATIENT" || role ==="PROVIDER") && (
+            {(role === "PATIENT" || role === "GUEST") && (
+              <button className="secondary-btn" onClick={() => navigate("/searchinsurance")}>
+                {t("common.searchInsurance")}
+              </button>
+            )}
+
+            {(role === "PATIENT" || role === "PROVIDER") && (
               <button className="secondary-btn" onClick={() => navigate("/manageprofile")}>
-                Manage Profile
+                {t("common.manageProfile")}
               </button>
             )}
 
             <button className="secondary-btn" onClick={() => navigate("/settings")}>
-              Settings
+              {t("common.settings")}
             </button>
           </div>
         </section>
