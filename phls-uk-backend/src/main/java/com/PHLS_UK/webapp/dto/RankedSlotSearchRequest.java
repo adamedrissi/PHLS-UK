@@ -26,6 +26,16 @@ public class RankedSlotSearchRequest {
 
     private Integer limit = 10;
 
+    private Boolean evaluationMode = false;
+
+    public Boolean getEvaluationMode() {
+        return evaluationMode;
+    }
+
+    public void setEvaluationMode(Boolean evaluationMode) {
+        this.evaluationMode = evaluationMode;
+    }
+
     public RankedSlotSearchRequest() {
     }
 

@@ -31,30 +31,44 @@ public class SlotRankingService {
                 );
 
         return candidates.stream()
-                .filter(slot -> preFilter(slot, request))
+                .filter(slot -> shouldIncludeCandidate(slot, request))
                 .map(slot -> mapRanked(slot, request))
                 .sorted(Comparator.comparing(RankedSlotSearchResponse::getRankingScore).reversed())
                 .limit(request.getLimit() == null ? 10 : request.getLimit())
                 .toList();
     }
 
-    private boolean preFilter(AvailabilitySlot slot, RankedSlotSearchRequest request) {
+    private boolean shouldIncludeCandidate(AvailabilitySlot slot, RankedSlotSearchRequest request) {
+        boolean evaluationMode = Boolean.TRUE.equals(request.getEvaluationMode());
+
+        if (evaluationMode) {
+            return evaluationPreFilter(slot, request);
+        }
+
+        return appPreFilter(slot, request);
+    }
+
+    /**
+     * Production/app filtering:
+     * keeps the current stricter booking search behavior for real users.
+     */
+    private boolean appPreFilter(AvailabilitySlot slot, RankedSlotSearchRequest request) {
         boolean specialtyOk = request.getSpecialty() == null || request.getSpecialty().isBlank()
-            || slot.getProvider().getSpecialties().stream()
-            .anyMatch(s -> s.getName().equalsIgnoreCase(request.getSpecialty().trim()));
+                || slot.getProvider().getSpecialties().stream()
+                .anyMatch(s -> s.getName().equalsIgnoreCase(request.getSpecialty().trim()));
 
         boolean priceOk = request.getMaxPrice() == null
-            || (slot.getPrice() != null && slot.getPrice().compareTo(request.getMaxPrice()) <= 0);
+                || (slot.getPrice() != null && slot.getPrice().compareTo(request.getMaxPrice()) <= 0);
 
         boolean ratingOk = request.getMinRating() == null
-            || (slot.getClinic().getRatingAverage() != null
+                || (slot.getClinic().getRatingAverage() != null
                 && slot.getClinic().getRatingAverage().compareTo(request.getMinRating()) >= 0);
 
         boolean dateOk = true;
         if (request.getPreferredDate() != null) {
             long daysDiff = Math.abs(
-                slot.getStartTime().toLocalDate().toEpochDay()
-                - request.getPreferredDate().toEpochDay()
+                    slot.getStartTime().toLocalDate().toEpochDay()
+                            - request.getPreferredDate().toEpochDay()
             );
             dateOk = daysDiff <= 7;
         }
@@ -67,16 +81,32 @@ public class SlotRankingService {
                 && slot.getClinic().getLongitude() != null) {
 
             double distanceMiles = haversineMiles(
-                request.getUserLatitude(),
-                request.getUserLongitude(),
-                slot.getClinic().getLatitude().doubleValue(),
-                slot.getClinic().getLongitude().doubleValue()
-        );
+                    request.getUserLatitude(),
+                    request.getUserLongitude(),
+                    slot.getClinic().getLatitude().doubleValue(),
+                    slot.getClinic().getLongitude().doubleValue()
+            );
 
             radiusOk = distanceMiles <= request.getRadiusMiles();
         }
 
         return specialtyOk && priceOk && ratingOk && dateOk && radiusOk;
+    }
+
+    /**
+     * Evaluation filtering:
+     * intentionally broader so the ranking models are evaluated over a richer
+     * candidate pool instead of a tiny already-perfect set.
+     *
+     * Recommended: keep specialty as a hard candidate filter, but make price,
+     * rating, date, time, and distance soft scoring factors only.
+     */
+    private boolean evaluationPreFilter(AvailabilitySlot slot, RankedSlotSearchRequest request) {
+        boolean specialtyOk = request.getSpecialty() == null || request.getSpecialty().isBlank()
+                || slot.getProvider().getSpecialties().stream()
+                .anyMatch(s -> s.getName().equalsIgnoreCase(request.getSpecialty().trim()));
+
+        return specialtyOk;
     }
 
     private double haversineMiles(double lat1, double lon1, double lat2, double lon2) {
@@ -109,6 +139,8 @@ public class SlotRankingService {
                 slot.getClinic().getPostcode(),
                 slot.getPrice(),
                 slot.getClinic().getRatingAverage(),
+                slot.getClinic().getLatitude(),
+                slot.getClinic().getLongitude(),
                 slot.getStartTime(),
                 slot.getEndTime(),
                 slot.getProvider().getSpecialties().stream()
@@ -129,11 +161,11 @@ public class SlotRankingService {
         double distanceScore = computeDistanceScore(slot, request);
 
         return 0.30 * specialtyMatch
-            + 0.15 * priceScore
-            + 0.15 * dateScore
-            + 0.10 * timeBucketScore
-            + 0.15 * ratingScore
-            + 0.15 * distanceScore;
+                + 0.15 * priceScore
+                + 0.15 * dateScore
+                + 0.10 * timeBucketScore
+                + 0.15 * ratingScore
+                + 0.15 * distanceScore;
     }
 
     private double computeContentScore(AvailabilitySlot slot, RankedSlotSearchRequest request) {
@@ -153,7 +185,7 @@ public class SlotRankingService {
         if (request.getMinRating() != null) {
             totalScore += computeRatingPreferenceScore(slot, request);
             activeFeatures++;
-     }
+        }
 
         if (request.getPreferredDate() != null) {
             totalScore += computeDateScore(slot, request);
@@ -166,10 +198,10 @@ public class SlotRankingService {
         }
 
         if (request.getUserLatitude() != null
-            && request.getUserLongitude() != null
-            && request.getRadiusMiles() != null) {
-        totalScore += computeDistanceScore(slot, request);
-        activeFeatures++;
+                && request.getUserLongitude() != null
+                && request.getRadiusMiles() != null) {
+            totalScore += computeDistanceScore(slot, request);
+            activeFeatures++;
         }
 
         if (activeFeatures == 0) {
@@ -235,7 +267,8 @@ public class SlotRankingService {
         }
 
         long daysDiff = Math.abs(
-                slot.getStartTime().toLocalDate().toEpochDay() - request.getPreferredDate().toEpochDay()
+                slot.getStartTime().toLocalDate().toEpochDay()
+                        - request.getPreferredDate().toEpochDay()
         );
 
         if (daysDiff <= 3) {
@@ -280,9 +313,9 @@ public class SlotRankingService {
         );
 
         double radius = request.getRadiusMiles();
-            if (radius <= 0) {
-                return 0.0;
-            }
+        if (radius <= 0) {
+            return 0.0;
+        }
 
         return Math.max(0.0, 1.0 - (distanceMiles / radius));
     }

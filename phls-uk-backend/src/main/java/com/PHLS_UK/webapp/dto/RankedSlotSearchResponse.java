@@ -13,6 +13,8 @@ public class RankedSlotSearchResponse {
     private String city;
     private String postcode;
 
+    private BigDecimal clinicLatitude;
+    private BigDecimal clinicLongitude;
     private BigDecimal price;
     private BigDecimal clinicRatingAverage;
 
@@ -36,6 +38,8 @@ public class RankedSlotSearchResponse {
             String postcode,
             BigDecimal price,
             BigDecimal clinicRatingAverage,
+            BigDecimal clinicLatitude,
+            BigDecimal clinicLongitude,
             LocalDateTime startTime,
             LocalDateTime endTime,
             List<String> specialties,
@@ -49,6 +53,8 @@ public class RankedSlotSearchResponse {
         this.city = city;
         this.postcode = postcode;
         this.price = price;
+        this.clinicLatitude = clinicLatitude;
+        this.clinicLongitude = clinicLongitude;
         this.clinicRatingAverage = clinicRatingAverage;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -103,6 +109,22 @@ public class RankedSlotSearchResponse {
 
     public void setPostcode(String postcode) {
         this.postcode = postcode;
+    }
+
+    public BigDecimal getClinicLatitude() {
+        return clinicLatitude;
+    }
+
+    public void setClinicLatitude(BigDecimal clinicLatitude) {
+        this.clinicLatitude = clinicLatitude;
+    }
+
+    public BigDecimal getClinicLongitude() {
+        return clinicLongitude;
+    }
+
+    public void setClinicLongitude(BigDecimal clinicLongitude) {
+        this.clinicLongitude = clinicLongitude;
     }
 
     public BigDecimal getPrice() {
