@@ -324,6 +324,14 @@ const enTranslation = {
     rating: "Rating",
     priceFrom: "Price from",
   },
+
+  notFound: {
+    errorCode: "Error 404",
+    title: "Page not found",
+    subtitle: "The page you are looking for does not exist or may have been moved.",
+    goToLogin: "Go to Login",
+    goToHome: "Go to Home"
+  },
 };
 
 const cyTranslation = {
@@ -648,6 +656,14 @@ const cyTranslation = {
   providerCard: {
     rating: "Sgôr",
     priceFrom: "Pris o",
+  },
+
+  notFound: {
+    errorCode: "Gwall 404",
+    title: "Ni chanfuwyd y dudalen",
+    subtitle: "Nid yw'r dudalen rydych yn chwilio amdani yn bodoli neu efallai ei bod wedi'i symud.",
+    goToLogin: "Ewch i Fewngofnodi",
+    goToHome: "Ewch i'r Hafan"
   },
 };
 
@@ -974,6 +990,14 @@ const esTranslation = {
     rating: "Valoración",
     priceFrom: "Precio desde",
   },
+
+  notFound: {
+    errorCode: "Error 404",
+    title: "Página no encontrada",
+    subtitle: "La página que buscas no existe o puede haber sido movida.",
+    goToLogin: "Ir a Iniciar sesión",
+    goToHome: "Ir a Inicio"
+  },
 };
 
 const paTranslation = {
@@ -1298,6 +1322,14 @@ const paTranslation = {
   providerCard: {
     rating: "ਰੇਟਿੰਗ",
     priceFrom: "ਕੀਮਤ ਸ਼ੁਰੂ",
+  },
+
+  notFound: {
+    errorCode: "ਗਲਤੀ 404",
+    title: "ਪੰਨਾ ਨਹੀਂ ਮਿਲਿਆ",
+    subtitle: "ਜਿਸ ਪੰਨੇ ਨੂੰ ਤੁਸੀਂ ਲੱਭ ਰਹੇ ਹੋ ਉਹ ਮੌਜੂਦ ਨਹੀਂ ਹੈ ਜਾਂ ਸ਼ਾਇਦ ਕਿਸੇ ਹੋਰ ਥਾਂ ਭੇਜਿਆ ਗਿਆ ਹੈ।",
+    goToLogin: "ਲਾਗ ਇਨ ਵੱਲ ਜਾਓ",
+    goToHome: "ਮੁੱਖ ਪੰਨੇ ਵੱਲ ਜਾਓ"
   },
 };
 
@@ -1624,6 +1656,14 @@ const plTranslation = {
     rating: "Ocena",
     priceFrom: "Cena od",
   },
+
+  notFound: {
+    errorCode: "Błąd 404",
+    title: "Nie znaleziono strony",
+    subtitle: "Strona, której szukasz, nie istnieje lub mogła zostać przeniesiona.",
+    goToLogin: "Przejdź do logowania",
+    goToHome: "Przejdź do strony głównej"
+  },
 };
 
 const ptTranslation = {
@@ -1948,6 +1988,14 @@ const ptTranslation = {
   providerCard: {
     rating: "Classificação",
     priceFrom: "Preço desde",
+  },
+
+  notFound: {
+    errorCode: "Erro 404",
+    title: "Página não encontrada",
+    subtitle: "A página que procura não existe ou pode ter sido movida.",
+    goToLogin: "Ir para Iniciar sessão",
+    goToHome: "Ir para Início"
   },
 };
 
@@ -2274,6 +2322,14 @@ const roTranslation = {
     rating: "Evaluare",
     priceFrom: "Preț de la",
   },
+
+  notFound: {
+    errorCode: "Eroare 404",
+    title: "Pagina nu a fost găsită",
+    subtitle: "Pagina pe care o cauți nu există sau este posibil să fi fost mutată.",
+    goToLogin: "Mergi la Autentificare",
+    goToHome: "Mergi la Acasă"
+  },
 };
 
 const urTranslation = {
@@ -2598,6 +2654,14 @@ const urTranslation = {
   providerCard: {
     rating: "ریٹنگ",
     priceFrom: "قیمت شروع",
+  },
+
+  notFound: {
+    errorCode: "خرابی 404",
+    title: "صفحہ نہیں ملا",
+    subtitle: "آپ جس صفحے کو تلاش کر رہے ہیں وہ موجود نہیں ہے یا ممکن ہے منتقل کر دیا گیا ہو۔",
+    goToLogin: "لاگ اِن پر جائیں",
+    goToHome: "ہوم پر جائیں"
   },
 };
 

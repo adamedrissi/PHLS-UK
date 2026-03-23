@@ -5,6 +5,7 @@ import logo from "../assets/logotype.png";
 import headerBg from "../assets/logoBackground2.png";
 import headerBg2 from "../assets/logoBackground3.png";
 import footerImage from "../assets/logo.png";
+import trustpilotBadge from "../assets/trustpilot.png";
 
 function AppShell() {
   const navigate = useNavigate();
@@ -148,6 +149,23 @@ function AppShell() {
               alt="PHLS-UK footer emblem"
               className="shell-footer-logo"
             />
+          </div>
+          
+          <div className="shell-footer-trustpilot-wrap">
+            <a
+              href="https://uk.trustpilot.com/review/phlsuk.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shell-footer-trustpilot-link"
+              aria-label="Rate us on Trustpilot"
+              title="Rate us on Trustpilot"
+            >
+            <img
+              src={trustpilotBadge}
+              alt="Trustpilot"
+              className="shell-footer-trustpilot-image"
+            />
+            </a>
           </div>
         </div>
       </footer>

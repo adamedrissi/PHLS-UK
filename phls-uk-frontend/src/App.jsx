@@ -10,6 +10,7 @@ import PatientFaqPage from "./pages/PatientFaqPage";
 import ProviderFaqPage from "./pages/ProviderFaqPage";
 import AppShell from "./components/AppShell";
 import ScrollToTop from "./components/ScrollToTop";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
           <Route path="/faq-provider" element={<ProviderFaqPage />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

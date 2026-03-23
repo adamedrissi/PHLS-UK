@@ -48,10 +48,7 @@ public class SlotRankingService {
         return appPreFilter(slot, request);
     }
 
-    /**
-     * Production/app filtering:
-     * keeps the current stricter booking search behavior for real users.
-     */
+    //Production/app filtering
     private boolean appPreFilter(AvailabilitySlot slot, RankedSlotSearchRequest request) {
         boolean specialtyOk = request.getSpecialty() == null || request.getSpecialty().isBlank()
                 || slot.getProvider().getSpecialties().stream()
@@ -93,14 +90,7 @@ public class SlotRankingService {
         return specialtyOk && priceOk && ratingOk && dateOk && radiusOk;
     }
 
-    /**
-     * Evaluation filtering:
-     * intentionally broader so the ranking models are evaluated over a richer
-     * candidate pool instead of a tiny already-perfect set.
-     *
-     * Recommended: keep specialty as a hard candidate filter, but make price,
-     * rating, date, time, and distance soft scoring factors only.
-     */
+    //Evaluation filtering: specialty - hard candidate filter, price, rating, date, time, and distance - soft scoring factors
     private boolean evaluationPreFilter(AvailabilitySlot slot, RankedSlotSearchRequest request) {
         boolean specialtyOk = request.getSpecialty() == null || request.getSpecialty().isBlank()
                 || slot.getProvider().getSpecialties().stream()
