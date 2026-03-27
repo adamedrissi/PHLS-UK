@@ -14,7 +14,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins  = {
+    "http://localhost:3000",
+    "https://phlsuk.netlify.app"
+})
 @RequestMapping("/api/providers")
 public class ProviderSearchController {
 
