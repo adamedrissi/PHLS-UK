@@ -46,6 +46,15 @@ public class BookingService {
             throw new RuntimeException("Only patients can create bookings");
         }
 
+        long activeBookingCount = bookingRepository.countByPatient_User_IdAndBookingStatusIn(
+                user.getId(),
+                List.of(BookingStatus.CONFIRMED, BookingStatus.RESCHEDULED)
+        );
+
+        if (activeBookingCount >= 5) {
+                throw new RuntimeException("Patients can only hold up to 5 active bookings");
+        }
+
         PatientProfile patient = patientProfileRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Patient profile not found"));
 
@@ -208,6 +217,32 @@ public class BookingService {
             saved.getSlot().getEndTime(),
             "Booking cancelled by provider"
         );
+        }
+
+        @Transactional
+        public String deleteCancelledBookingAsPatient(Long bookingId, Long userId) {
+            Booking booking = bookingRepository.findByIdAndPatient_User_Id(bookingId, userId)
+                    .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            if (booking.getBookingStatus() != BookingStatus.CANCELLED) {
+                throw new RuntimeException("Only cancelled bookings can be deleted");
+            }
+
+            bookingRepository.delete(booking);
+            return "Cancelled booking deleted successfully";
+        }
+
+        @Transactional
+        public String deleteCancelledBookingAsProvider(Long bookingId, Long userId) {
+            Booking booking = bookingRepository.findByIdAndProvider_User_Id(bookingId, userId)
+                    .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+            if (booking.getBookingStatus() != BookingStatus.CANCELLED) {
+                throw new RuntimeException("Only cancelled bookings can be deleted");
+            }
+
+            bookingRepository.delete(booking);
+            return "Cancelled booking deleted successfully";
         }
 
     private String buildConfirmationMessage(User user, PatientProfile patient, AvailabilitySlot slot) {

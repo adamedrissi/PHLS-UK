@@ -29,4 +29,6 @@ public interface AvailabilitySlotRepository extends JpaRepository<AvailabilitySl
             LocalDateTime endTime,
             LocalDateTime startTime
     );
+
+    long countByProvider_User_IdAndStatusAndStartTimeAfter(Long userId, SlotStatus status, LocalDateTime startTime);
 }

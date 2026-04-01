@@ -12,7 +12,7 @@ export async function createBooking(payload) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(data?.message || "Booking failed");
+    throw new Error(data?.message || data?.error || "Booking failed");
   }
 
   return data;
@@ -81,6 +81,23 @@ export async function cancelBookingAsProvider(bookingId, userId) {
 
   if (!response.ok) {
     throw new Error(data?.message || "Failed to cancel booking");
+  }
+
+  return data;
+}
+
+export async function deleteCancelledBooking(bookingId, userId, role) {
+  const response = await fetch(
+    `${API_BASE_URL}/${bookingId}?userId=${userId}&role=${role}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  const data = await response.text().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data || "Failed to delete cancelled booking");
   }
 
   return data;

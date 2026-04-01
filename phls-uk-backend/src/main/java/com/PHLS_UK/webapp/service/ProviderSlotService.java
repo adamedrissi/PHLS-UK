@@ -84,6 +84,16 @@ public class ProviderSlotService {
             throw new RuntimeException("This slot overlaps with an existing slot");
         }
 
+        long availableFutureSlotCount = availabilitySlotRepository.countByProvider_User_IdAndStatusAndStartTimeAfter(
+            user.getId(),
+            SlotStatus.AVAILABLE,
+            LocalDateTime.now()
+        );
+
+        if (availableFutureSlotCount >= 10) {
+            throw new RuntimeException("Providers can only have up to 10 available future slots");
+        }
+
         AvailabilitySlot slot = new AvailabilitySlot();
         slot.setProvider(provider);
         slot.setClinic(provider.getClinic());

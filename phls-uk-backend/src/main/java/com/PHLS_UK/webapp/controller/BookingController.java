@@ -54,4 +54,19 @@ public class BookingController {
                                                @RequestParam Long userId) {
         return bookingService.cancelBookingAsProvider(bookingId, userId);
     }
+
+    @DeleteMapping("/{bookingId}")
+    public String deleteCancelledBooking(@PathVariable Long bookingId,
+                                        @RequestParam Long userId,
+                                        @RequestParam String role) {
+        if ("PATIENT".equalsIgnoreCase(role)) {
+            return bookingService.deleteCancelledBookingAsPatient(bookingId, userId);
+        }
+
+        if ("PROVIDER".equalsIgnoreCase(role)) {
+            return bookingService.deleteCancelledBookingAsProvider(bookingId, userId);
+        }
+
+        throw new RuntimeException("Only patients and providers can delete cancelled bookings");
+    }
 }

@@ -5,6 +5,7 @@ import {
   cancelBookingAsProvider,
   getMyBookings,
   getProviderBookings,
+  deleteCancelledBooking,
 } from "../services/bookingService";
 import {
   getProviderSlots,
@@ -93,6 +94,21 @@ function ManageBookingsPage() {
       await loadData();
     } catch (err) {
       alert(err.message || t("manageBookings.failedToCancelBooking"));
+    }
+  }
+
+  async function handleDelete(bookingId) {
+    try {
+      if (!window.confirm("Delete this cancelled booking permanently?")) {
+        return;
+      }
+      const result = await deleteCancelledBooking(bookingId, userId, role);
+      alert(result || "Cancelled booking deleted");
+
+      const updated = await getMyBookings(userId);
+      setBookings(updated);
+    } catch (err) {
+      alert(err.message || "Failed to delete cancelled booking");
     }
   }
 
@@ -234,7 +250,7 @@ function ManageBookingsPage() {
                         </p>
                       </div>
 
-                      {booking.bookingStatus !== "CANCELLED" && (
+                      {booking.bookingStatus !== "CANCELLED" ? (
                         <button
                           className="danger-btn"
                           onClick={() => handleCancelBooking(booking.bookingId)}
@@ -242,6 +258,13 @@ function ManageBookingsPage() {
                           {role === "PROVIDER"
                             ? t("manageBookings.cancelBookingAsProvider")
                             : t("manageBookings.cancelBooking")}
+                        </button>
+                      ) : (
+                        <button
+                          className="secondary-btn"
+                          onClick={() => handleDelete(booking.bookingId)}
+                        >
+                          {t("manageBookings.deleteCancelledBooking")}
                         </button>
                       )}
                     </div>

@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { deleteCancelledBooking } from "./services/bookingService";
 
 const enTranslation = {
   common: {
@@ -181,6 +182,7 @@ const enTranslation = {
     removeSlot: "Remove Slot",
     failedToLoadData: "Failed to load data",
     bookingCancelled: "Booking cancelled",
+    deleteCancelledBooking: "Delete booking",
     failedToCancelBooking: "Failed to cancel booking",
     slotCreatedFor: "Slot created for",
     failedToCreateSlot: "Failed to create slot",
@@ -514,6 +516,7 @@ const cyTranslation = {
     removeSlot: "Tynnu Slot",
     failedToLoadData: "Methwyd llwytho data",
     bookingCancelled: "Archeb wedi'i chanslo",
+    deleteCancelledBooking: "Dileu archeb",
     failedToCancelBooking: "Methwyd canslo'r archeb",
     slotCreatedFor: "Crëwyd slot ar gyfer",
     failedToCreateSlot: "Methwyd creu slot",
@@ -814,7 +817,7 @@ const esTranslation = {
     resultSingular: "resultado clasificado",
     resultsPlural: "resultados clasificados",
     using: "usando",
-    loadingRankedSlots: "Cargando franjas clasificadas...",
+    loadingRankedSlots: "Cargando plazas clasificadas...",
     noAvailableBookings: "No se encontraron reservas disponibles.",
     somethingWentWrong: "Algo salió mal",
     searchFailed: "La búsqueda falló",
@@ -825,10 +828,10 @@ const esTranslation = {
   manageBookings: {
     accessRestricted: "Acceso restringido",
     onlyPatientsProviders: "Solo los pacientes y proveedores pueden gestionar reservas.",
-    providerTitle: "Gestionar reservas y franjas",
+    providerTitle: "Gestionar reservas y plazas",
     patientTitle: "Gestionar reservas",
     providerSubtitle:
-      "Consulta tus reservas de citas y gestiona tus franjas de disponibilidad.",
+      "Consulta tus reservas de citas y gestiona tus plazas de disponibilidad.",
     patientSubtitle: "Consulta y gestiona tus registros de reservas desde tu cuenta.",
     loading: "Cargando...",
     appointmentBookings: "Reservas de citas",
@@ -838,20 +841,21 @@ const esTranslation = {
     time: "Hora",
     cancelBookingAsProvider: "Cancelar reserva como proveedor",
     cancelBooking: "Cancelar reserva",
-    manageAvailableSlots: "Gestionar franjas disponibles",
+    manageAvailableSlots: "Gestionar plazas disponibles",
     startTime: "Hora de inicio",
     endTime: "Hora de finalización",
     price: "Precio (£)",
-    addSlot: "Añadir franja",
-    noSlotsFound: "No se encontraron franjas.",
-    removeSlot: "Eliminar franja",
+    addSlot: "Añadir plaza",
+    noSlotsFound: "No se encontraron plazas.",
+    removeSlot: "Eliminar plaza",
     failedToLoadData: "No se pudieron cargar los datos",
     bookingCancelled: "Reserva cancelada",
+    deleteCancelledBooking: "Eliminar reserva",
     failedToCancelBooking: "No se pudo cancelar la reserva",
-    slotCreatedFor: "Franja creada para",
-    failedToCreateSlot: "No se pudo crear la franja",
-    slotDeleted: "Franja eliminada",
-    failedToDeleteSlot: "No se pudo eliminar la franja",
+    slotCreatedFor: "Plaza creada para",
+    failedToCreateSlot: "No se pudo crear la plaza",
+    slotDeleted: "Plaza eliminada",
+    failedToDeleteSlot: "No se pudo eliminar la plaza",
   },
 
   profile: {
@@ -895,7 +899,7 @@ const esTranslation = {
     q3: {
       question: "¿Cómo busco citas?",
       answer:
-        "Ve a Buscar reservas y filtra por ciudad, especialidad, precio máximo o fecha preferida para ver las franjas de citas disponibles.",
+        "Ve a Buscar reservas y filtra por ciudad, especialidad, precio máximo o fecha preferida para ver las plazas de citas disponibles.",
     },
     q4: {
       question: "¿Cómo reservo una cita?",
@@ -1180,6 +1184,7 @@ const paTranslation = {
     removeSlot: "ਸਲਾਟ ਹਟਾਓ",
     failedToLoadData: "ਡਾਟਾ ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ",
     bookingCancelled: "ਬੁਕਿੰਗ ਰੱਦ ਹੋ ਗਈ",
+    deleteCancelledBooking: "ਰੱਦ ਕੀਤੀ ਬੁਕਿੰਗ ਹਟਾਓ",
     failedToCancelBooking: "ਬੁਕਿੰਗ ਰੱਦ ਕਰਨ ਵਿੱਚ ਅਸਫਲ",
     slotCreatedFor: "ਸਲਾਟ ਬਣਾਇਆ ਗਿਆ",
     failedToCreateSlot: "ਸਲਾਟ ਬਣਾਉਣ ਵਿੱਚ ਅਸਫਲ",
@@ -1513,6 +1518,7 @@ const plTranslation = {
     removeSlot: "Usuń termin",
     failedToLoadData: "Nie udało się załadować danych",
     bookingCancelled: "Rezerwacja anulowana",
+    deleteCancelledBooking: "Usuń anulowaną rezerwację",
     failedToCancelBooking: "Nie udało się anulować rezerwacji",
     slotCreatedFor: "Utworzono termin na",
     failedToCreateSlot: "Nie udało się utworzyć terminu",
@@ -1846,6 +1852,7 @@ const ptTranslation = {
     removeSlot: "Remover horário",
     failedToLoadData: "Falha ao carregar os dados",
     bookingCancelled: "Reserva cancelada",
+    deleteCancelledBooking: "Eliminar reserva",
     failedToCancelBooking: "Falha ao cancelar a reserva",
     slotCreatedFor: "Horário criado para",
     failedToCreateSlot: "Falha ao criar o horário",
@@ -2179,6 +2186,7 @@ const roTranslation = {
     removeSlot: "Elimină interval",
     failedToLoadData: "Încărcarea datelor a eșuat",
     bookingCancelled: "Rezervare anulată",
+    deleteCancelledBooking: "Șterge rezervarea anulată",
     failedToCancelBooking: "Anularea rezervării a eșuat",
     slotCreatedFor: "Interval creat pentru",
     failedToCreateSlot: "Crearea intervalului a eșuat",
@@ -2512,6 +2520,7 @@ const urTranslation = {
     removeSlot: "سلاٹ ہٹائیں",
     failedToLoadData: "ڈیٹا لوڈ کرنے میں ناکامی",
     bookingCancelled: "بکنگ منسوخ ہوگئی",
+    deleteCancelledBooking: "منسوخ شدہ بکنگ حذف کریں",
     failedToCancelBooking: "بکنگ منسوخ کرنے میں ناکامی",
     slotCreatedFor: "سلاٹ بنایا گیا برائے",
     failedToCreateSlot: "سلاٹ بنانے میں ناکامی",

@@ -30,7 +30,9 @@ public class GlobalExceptionHandler {
             || "This slot is no longer available".equals(message)
             || "Booking not found".equals(message)
             || "Selected new slot is not available".equals(message)
-            || "Booking is already cancelled".equals(message)) {
+            || "Booking is already cancelled".equals(message)
+            || "Patients can only hold up to 5 active bookings".equals(message)
+            || "Providers can only have up to 10 available future slots".equals(message)) {
             return ResponseEntity
                 .badRequest()
                 .body(Map.of("message", message));
