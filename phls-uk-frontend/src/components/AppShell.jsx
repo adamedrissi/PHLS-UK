@@ -140,7 +140,7 @@ function AppShell() {
 
           <div className="shell-footer-text-wrap">
             <p className="shell-footer-pill">{t("footer.copyright")}</p>
-            <p className="shell-footer-pill">{t("footer.contact")}</p>
+            <a className="shell-footer-link" href="mailto:contact.phlsuk@gmail.com">{t("footer.contact")}</a>
           </div>
 
           <div className="shell-footer-image-wrap">

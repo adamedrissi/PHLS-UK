@@ -137,10 +137,10 @@ const enTranslation = {
     morning: "Morning",
     afternoon: "Afternoon",
     evening: "Evening",
-    rankingModel: "Ranking model",
-    baselineWeighted: "Baseline weighted",
-    contentBasedSimilarity: "Content-based similarity",
-    baselineWeightedRanking: "Baseline weighted ranking",
+    rankingModel: "Sorting Ranking Method",
+    baselineWeighted: "Relevance",
+    contentBasedSimilarity: "Similarity",
+    baselineWeightedRanking: "Relevance ranking",
     resultsLimit: "Results limit",
     search: "Search",
     reset: "Reset",
@@ -306,8 +306,8 @@ const enTranslation = {
   slotCard: {
     bookingConfirmed: "Booking confirmed",
     bookingFailed: "Booking failed",
-    baseline: "Baseline",
-    content: "Content",
+    baseline: "Relevance",
+    content: "Similarity",
     score: "Score",
     city: "City",
     postcode: "Postcode",
@@ -670,11 +670,11 @@ const cyTranslation = {
 const esTranslation = {
   common: {
     language: "Idioma",
-    theme: "Tema",
+    theme: "Apariencia",
     light: "Claro",
     dark: "Oscuro",
     home: "Inicio",
-    settings: "Configuración",
+    settings: "Ajustes",
     login: "Iniciar sesión",
     register: "Registrarse",
     patient: "Paciente",
@@ -691,7 +691,7 @@ const esTranslation = {
     patientFaqs: "Preguntas frecuentes para pacientes",
     providerFaqs: "Preguntas frecuentes para proveedores",
     backToTop: "↑ Volver arriba",
-    scrollToBottom: "↓ Ir al final",
+    scrollToBottom: "↓ Ir abajo",
   },
 
   home: {
@@ -701,13 +701,13 @@ const esTranslation = {
     role: "Rol",
     authenticated: "Autenticado",
     language: "Idioma",
-    theme: "Tema",
+    theme: "Modo",
   },
 
   loginPage: {
     heroTitle: "Busca y reserva atención sanitaria privada con confianza",
     heroSubtitle:
-      "Compara servicios, descubre proveedores y gestiona citas a través de una plataforma sanitaria más limpia y accesible.",
+      "Compara servicios, descubre proveedores y gestiona citas a través de una plataforma sanitaria más intuitiva y accesible.",
     welcomeBack: "Bienvenido de nuevo",
     createAccount: "Crea tu cuenta",
     accessText: "Accede a PHLS-UK como paciente o proveedor",
@@ -736,7 +736,7 @@ const esTranslation = {
   languages: {
     en: "Inglés",
     cy: "Galés / Cymraeg",
-    es: "Español / Castellano",
+    es: "Español/Castellano",
     pa: "Panyabí / Punjabi",
     pl: "Polaco / Polski",
     pt: "Portugués / Português",
@@ -745,9 +745,9 @@ const esTranslation = {
   },
 
   settings: {
-    title: "Configuración",
+    title: "Ajustes",
     subtitle:
-      "Personaliza tu experiencia en PHLS-UK con preferencias de tema, idioma y notificaciones.",
+      "Personaliza tu experiencia en PHLS-UK con preferencias de apariencia, idioma y notificaciones.",
     themeDescription: "Elige cómo se ve la plataforma en las páginas principales.",
     languageDescription: "Selecciona tu idioma preferido para la interfaz.",
     lightMode: "Modo claro",
@@ -767,7 +767,7 @@ const esTranslation = {
   insurance: {
     title: "Búsqueda de seguros médicos",
     subtitle:
-      "Explora y compara proveedores de seguros médicos privados en un diseño más limpio y sencillo.",
+      "Explora y compara proveedores de seguros médicos privados en un diseño más cómodo y sencillo.",
     searchLabel: "Buscar proveedores de seguros",
     searchPlaceholder: "Escribe el nombre del proveedor...",
     noResults: "No se encontraron proveedores de seguros.",
@@ -804,9 +804,9 @@ const esTranslation = {
     afternoon: "Tarde",
     evening: "Noche",
     rankingModel: "Modelo de clasificación",
-    baselineWeighted: "Ponderación base",
-    contentBasedSimilarity: "Similitud basada en contenido",
-    baselineWeightedRanking: "Clasificación ponderada base",
+    baselineWeighted: "Relevancia",
+    contentBasedSimilarity: "Similitud",
+    baselineWeightedRanking: "Método de relevancia",
     resultsLimit: "Límite de resultados",
     search: "Buscar",
     reset: "Restablecer",
@@ -900,7 +900,7 @@ const esTranslation = {
     q4: {
       question: "¿Cómo reservo una cita?",
       answer:
-        "Una vez que hayas iniciado sesión como paciente, selecciona una franja disponible y elige la opción de reserva que aparece en la tarjeta de la cita.",
+        "Una vez que hayas iniciado sesión como paciente, selecciona un horario disponible y elige la opción de reserva que aparece en la tarjeta de la cita.",
     },
     q5: {
       question: "¿Puedo cancelar una reserva?",
@@ -913,9 +913,9 @@ const esTranslation = {
         "Sí. La página Buscar seguros te permite explorar y comparar proveedores de seguros médicos disponibles.",
     },
     q7: {
-      question: "¿Puedo cambiar el tema o el idioma?",
+      question: "¿Puedo cambiar la apariencia del interfaz o el idioma?",
       answer:
-        "Sí. Visita la página Configuración para cambiar entre modo claro y oscuro y elegir tu idioma preferido.",
+        "Sí. Visita la página Ajustes para cambiar entre modo claro y oscuro y elegir tu idioma preferido.",
     },
     q8: {
       question: "¿Con quién puedo contactar para obtener ayuda?",
@@ -960,7 +960,7 @@ const esTranslation = {
     q7: {
       question: "¿Puedo usar PHLS-UK en modo oscuro?",
       answer:
-        "Sí. Los proveedores pueden cambiar la apariencia de la plataforma desde la página Configuración.",
+        "Sí. Los proveedores pueden cambiar la apariencia de la plataforma desde la página Ajustes.",
     },
     q8: {
       question: "¿Dónde puedo obtener ayuda con problemas de acceso de proveedor?",
@@ -972,8 +972,8 @@ const esTranslation = {
   slotCard: {
     bookingConfirmed: "Reserva confirmada",
     bookingFailed: "La reserva falló",
-    baseline: "Base",
-    content: "Contenido",
+    baseline: "Relevancia",
+    content: "Similitud",
     score: "Puntuación",
     city: "Ciudad",
     postcode: "Código postal",
