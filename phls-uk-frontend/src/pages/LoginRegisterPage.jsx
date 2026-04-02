@@ -6,6 +6,7 @@ import {
   registerPatient,
   registerProvider,
 } from "../services/authService";
+import { getClinics } from "../services/clinicService";
 import logo from "../assets/logo.png";
 import panelBg from "../assets/logoBackground.png";
 import LanguageSelector from "../components/LanguageSelector";
@@ -21,6 +22,9 @@ function LoginRegisterPage() {
     email: "",
     password: "",
   });
+
+  const [clinics, setClinics] = useState([]);
+  const [clinicsLoading, setClinicsLoading] = useState(false);
 
   const [registerForm, setRegisterForm] = useState({
     fullName: "",
@@ -53,6 +57,23 @@ function LoginRegisterPage() {
       navigate("/home");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    async function loadClinics() {
+      setClinicsLoading(true);
+
+      try {
+        const data = await getClinics();
+        setClinics(data);
+      } catch (err) {
+        console.error("Failed to load clinics:", err);
+      } finally {
+        setClinicsLoading(false);
+      }
+    }
+
+    loadClinics();
+  }, []);
 
   function handleGuestEntry() {
     localStorage.removeItem("phlsToken");
@@ -96,6 +117,11 @@ function LoginRegisterPage() {
 
     if (registerForm.password !== registerForm.confirmPassword) {
       setError(t("loginPage.passwordsDoNotMatch"));
+      return;
+    }
+
+    if (userType === "PROVIDER" && !registerForm.clinicId) {
+      setError(t("loginPage.selectClinic"));
       return;
     }
 
@@ -479,9 +505,8 @@ function LoginRegisterPage() {
 
               {userType === "PROVIDER" && (
                 <div>
-                  <label className="form-label">{t("loginPage.clinicId")}</label>
-                  <input
-                    type="number"
+                  <label className="form-label">{t("loginPage.clinic")}</label>
+                  <select
                     value={registerForm.clinicId}
                     onChange={(e) =>
                       setRegisterForm({
@@ -489,9 +514,21 @@ function LoginRegisterPage() {
                         clinicId: e.target.value,
                       })
                     }
-                    placeholder={t("loginPage.enterClinicId")}
                     required
-                  />
+                    disabled={clinicsLoading}
+                  >
+                    <option value="">
+                      {clinicsLoading
+                        ? t("loginPage.loadingClinics")
+                        : t("loginPage.selectClinic")}
+                    </option>
+
+                    {clinics.map((clinic) => (
+                      <option key={clinic.id} value={clinic.id}>
+                        {clinic.clinicName} ({clinic.city}) - ID {clinic.id}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               )}
 

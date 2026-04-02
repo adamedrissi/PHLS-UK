@@ -20,7 +20,8 @@ public class GlobalExceptionHandler {
                     .body(Map.of("message", message));
         }
 
-        if ("Email already exists".equals(message)) {
+        if ("Email already exists".equals(message)
+            || "Selected clinic was not found".equals(message)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", message));

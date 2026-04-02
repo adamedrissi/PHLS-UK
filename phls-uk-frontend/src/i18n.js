@@ -61,6 +61,9 @@ const enTranslation = {
     loggingIn: "Logging in...",
     registering: "Registering...",
     enterAsGuest: "Enter as Guest",
+    clinic: "Clinic",
+    selectClinic: "Select a clinic",
+    loadingClinics: "Loading clinics...",
   },
 
   footer: {
@@ -395,6 +398,9 @@ const cyTranslation = {
     loggingIn: "Wrthi'n mewngofnodi...",
     registering: "Wrthi'n cofrestru...",
     enterAsGuest: "Mynediad fel Gwestai",
+    clinic: "Clinig",
+    selectClinic: "Dewiswch glinig",
+    loadingClinics: "Wrthi'n llwytho clinigau...",
   },
 
   footer: {
@@ -729,6 +735,9 @@ const esTranslation = {
     loggingIn: "Iniciando sesión...",
     registering: "Registrando...",
     enterAsGuest: "Entrar como invitado",
+    clinic: "Clínica",
+    selectClinic: "Seleccionar clínica",
+    loadingClinics: "Cargando clínicas...",
   },
 
   footer: {
@@ -1063,6 +1072,9 @@ const paTranslation = {
     loggingIn: "ਲਾਗ ਇਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
     registering: "ਰਜਿਸਟਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
     enterAsGuest: "ਮਹਿਮਾਨ ਵਜੋਂ ਪ੍ਰਵੇਸ਼ ਕਰੋ",
+    clinic: "ਕਲਿਨਿਕ",
+    selectClinic: "ਕਲਿਨਿਕ ਚੁਣੋ",
+    loadingClinics: "ਕਲਿਨਿਕ ਲੋਡ ਕਰ ਰਹੀਆਂ ਹਨ...",
   },
 
   footer: {
@@ -1397,6 +1409,9 @@ const plTranslation = {
     loggingIn: "Trwa logowanie...",
     registering: "Trwa rejestracja...",
     enterAsGuest: "Wejdź jako gość",
+    clinic: "Klinika",
+    selectClinic: "Wybierz klinikę",
+    loadingClinics: "Ładowanie klinik...",
   },
 
   footer: {
@@ -1731,6 +1746,9 @@ const ptTranslation = {
     loggingIn: "A iniciar sessão...",
     registering: "A registar...",
     enterAsGuest: "Entrar como convidado",
+    clinic: "Clínica",
+    selectClinic: "Selecione a clínica",
+    loadingClinics: "A carregar clínicas...",
   },
 
   footer: {
@@ -2065,6 +2083,9 @@ const roTranslation = {
     loggingIn: "Se autentifică...",
     registering: "Se înregistrează...",
     enterAsGuest: "Intră ca vizitator",
+    clinic: "Clinică",
+    selectClinic: "Selectează clinica",
+    loadingClinics: "Se încarcă cliniciile...",
   },
 
   footer: {
@@ -2399,6 +2420,9 @@ const urTranslation = {
     loggingIn: "لاگ اِن کیا جا رہا ہے...",
     registering: "رجسٹر کیا جا رہا ہے...",
     enterAsGuest: "مہمان کے طور پر داخل ہوں",
+    clinic: "کلینک",
+    selectClinic: "کلینک منتخب کریں",
+    loadingClinics: "کلینکس لوڈ ہو رہے ہیں...",
   },
 
   footer: {

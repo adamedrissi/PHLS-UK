@@ -76,7 +76,10 @@ public class AuthService {
         ProviderProfile profile = new ProviderProfile();
         profile.setUser(user);
         profile.setFullName(request.getFullName());
-        profile.setClinic(clinicRepo.findById(request.getClinicId()).orElseThrow());
+        profile.setClinic(
+            clinicRepo.findById(request.getClinicId())
+                .orElseThrow(() -> new RuntimeException("Selected clinic was not found"))
+        );
 
         providerRepo.save(profile);
     }
