@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { changePassword } from "../services/authService";
 
 function ManageProfilePage() {
   const { t } = useTranslation();
@@ -26,7 +27,7 @@ function ManageProfilePage() {
     return t("profile.guest");
   }, [role, t]);
 
-  function handlePasswordChange(e) {
+  async function handlePasswordChange(e) {
     e.preventDefault();
     setPasswordError("");
     setPasswordMessage("");
@@ -45,17 +46,23 @@ function ManageProfilePage() {
       return;
     }
 
-    if (passwordForm.newPassword.length < 8) {
-      setPasswordError(t("profile.passwordMinLength"));
-      return;
-    }
+    try {
+      await changePassword({
+        email,
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+        confirmNewPassword: passwordForm.confirmNewPassword,
+      });
 
-    setPasswordMessage(t("profile.passwordChangeReady"));
-    setPasswordForm({
-      currentPassword: "",
-      newPassword: "",
-      confirmNewPassword: "",
-    });
+      setPasswordMessage(t("profile.passwordUpdatedSuccessfully"));
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+    } catch (err) {
+      setPasswordError(err.message || t("profile.passwordChangeFailed"));
+    }
   }
 
   if (!isAuthenticated) {

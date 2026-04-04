@@ -14,8 +14,8 @@ class TestQuery:
     specialty: Optional[str] = None
     max_price: Optional[float] = None
     min_rating: Optional[float] = None
-    preferred_date: Optional[str] = None   # YYYY-MM-DD
-    preferred_time_bucket: Optional[str] = None   # MORNING/AFTERNOON/EVENING
+    preferred_date: Optional[str] = None   #YYYY-MM-DD
+    preferred_time_bucket: Optional[str] = None   #MORNING/AFTERNOON/EVENING
     user_latitude: Optional[float] = None
     user_longitude: Optional[float] = None
     radius_miles: Optional[float] = None

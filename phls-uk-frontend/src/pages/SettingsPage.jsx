@@ -164,7 +164,7 @@ function SettingsPage() {
               </div>
             </div>
 
-            <div
+            {/*<div
               className="card"
               style={{
                 padding: "1.25rem",
@@ -191,7 +191,8 @@ function SettingsPage() {
                   {t("settings.notifications.title")}: {notificationLabel}
                 </span>
               </div>
-            </div>
+            </div>*/}
+            
           </div>
         </section>
       </div>

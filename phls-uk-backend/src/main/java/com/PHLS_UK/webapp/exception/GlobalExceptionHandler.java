@@ -21,7 +21,15 @@ public class GlobalExceptionHandler {
         }
 
         if ("Email already exists".equals(message)
-            || "Selected clinic was not found".equals(message)) {
+            || "Selected clinic was not found".equals(message)
+            || "At least one specialty must be selected".equals(message)
+            || "A provider can select up to 3 specialties".equals(message)
+            || "One or more selected specialties were not found".equals(message)
+            || "User email is required".equals(message)
+            || "All password fields are required".equals(message)
+            || "New passwords do not match".equals(message)
+            || "Current password is incorrect".equals(message)
+            || "User not found".equals(message)) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", message));

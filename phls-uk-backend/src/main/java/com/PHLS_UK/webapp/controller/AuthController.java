@@ -32,4 +32,9 @@ public class AuthController {
     public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }
+
+    @PostMapping("/change-password")
+        public void changePassword(@RequestBody ChangePasswordRequest request) {
+        authService.changePassword(request);
+    }
 }

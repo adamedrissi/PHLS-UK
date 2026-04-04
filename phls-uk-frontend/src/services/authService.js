@@ -53,3 +53,21 @@ export async function registerProvider(payload) {
 
   return data;
 }
+
+export async function changePassword(payload) {
+  const response = await fetch(`${API_BASE_URL}/change-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.message || "Password change failed");
+  }
+
+  return data;
+}

@@ -14,6 +14,12 @@ import com.PHLS_UK.webapp.repository.ProviderProfileRepository;
 import com.PHLS_UK.webapp.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.PHLS_UK.webapp.entity.Specialty;
+import com.PHLS_UK.webapp.repository.SpecialtyRepository;
+import com.PHLS_UK.webapp.dto.ChangePasswordRequest;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class AuthService {
@@ -24,17 +30,20 @@ public class AuthService {
     private final ClinicRepository clinicRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final SpecialtyRepository specialtyRepo;
 
     public AuthService(UserRepository userRepository,
                        PatientProfileRepository patientRepo,
                        ProviderProfileRepository providerRepo,
                        ClinicRepository clinicRepo,
+                       SpecialtyRepository specialtyRepo,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService) {
         this.userRepository = userRepository;
         this.patientRepo = patientRepo;
         this.providerRepo = providerRepo;
         this.clinicRepo = clinicRepo;
+        this.specialtyRepo = specialtyRepo;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
@@ -65,6 +74,14 @@ public class AuthService {
             throw new RuntimeException("Email already exists");
         }
 
+        if (request.getSpecialtyIds() == null || request.getSpecialtyIds().isEmpty()) {
+            throw new RuntimeException("At least one specialty must be selected");
+        }
+
+        if (request.getSpecialtyIds().size() > 3) {
+            throw new RuntimeException("A provider can select up to 3 specialties");
+        }
+
         User user = new User();
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
@@ -80,6 +97,14 @@ public class AuthService {
             clinicRepo.findById(request.getClinicId())
                 .orElseThrow(() -> new RuntimeException("Selected clinic was not found"))
         );
+
+        Set<Specialty> specialties = new HashSet<>(specialtyRepo.findAllById(request.getSpecialtyIds()));
+
+        if (specialties.size() != request.getSpecialtyIds().size()) {
+            throw new RuntimeException("One or more selected specialties were not found");
+        }
+
+        profile.setSpecialties(specialties);
 
         providerRepo.save(profile);
     }
@@ -115,5 +140,31 @@ public class AuthService {
             fullName,
             user.getEmail()
         );
+    }
+
+    public void changePassword(ChangePasswordRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new RuntimeException("User email is required");
+        }
+
+        if (request.getCurrentPassword() == null || request.getCurrentPassword().isBlank()
+            || request.getNewPassword() == null || request.getNewPassword().isBlank()
+            || request.getConfirmNewPassword() == null || request.getConfirmNewPassword().isBlank()) {
+            throw new RuntimeException("All password fields are required");
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new RuntimeException("New passwords do not match");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

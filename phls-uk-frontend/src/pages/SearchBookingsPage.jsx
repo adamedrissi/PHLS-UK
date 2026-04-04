@@ -239,8 +239,8 @@ function SearchBookingsPage() {
                 >
                   <option value="">{t("bookings.allSpecialties")}</option>
                   {specialties.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
+                    <option key={item.id} value={item.name}>
+                      {item.name}
                     </option>
                   ))}
                 </select>

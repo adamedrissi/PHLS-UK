@@ -1,6 +1,6 @@
 package com.PHLS_UK.webapp.controller;
 
-import com.PHLS_UK.webapp.entity.Specialty;
+import com.PHLS_UK.webapp.dto.SpecialtyOptionResponse;
 import com.PHLS_UK.webapp.repository.SpecialtyRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,11 +24,14 @@ public class SpecialtyController {
     }
 
     @GetMapping
-    public List<String> getAllSpecialties() {
+    public List<SpecialtyOptionResponse> getAllSpecialties() {
         return specialtyRepository.findAll()
                 .stream()
-                .map(Specialty::getName)
-                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .sorted((a, b) -> a.getName().compareToIgnoreCase(b.getName()))
+                .map(specialty -> new SpecialtyOptionResponse(
+                        specialty.getId(),
+                        specialty.getName()
+                ))
                 .toList();
     }
 }

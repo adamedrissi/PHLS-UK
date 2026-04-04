@@ -1,10 +1,13 @@
 package com.PHLS_UK.webapp.dto;
 
+import java.util.List;
+
 public class ProviderRegisterRequest {
     private String email;
     private String password;
     private String fullName;
     private Long clinicId;
+    private List<Long> specialtyIds;
 
     public ProviderRegisterRequest() {
     }
@@ -39,5 +42,13 @@ public class ProviderRegisterRequest {
 
     public void setClinicId(Long clinicId) {
         this.clinicId = clinicId;
+    }
+
+    public List<Long> getSpecialtyIds() {
+        return specialtyIds;
+    }
+
+    public void setSpecialtyIds(List<Long> specialtyIds) {
+        this.specialtyIds = specialtyIds;
     }
 }

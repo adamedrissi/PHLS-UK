@@ -85,6 +85,9 @@ function ManageBookingsPage() {
 
   async function handleCancelBooking(bookingId) {
     try {
+      if (!window.confirm("Are you sure you want to cancel this booking?")) {
+        return;
+      }
       const result =
         role === "PROVIDER"
           ? await cancelBookingAsProvider(bookingId, userId)
@@ -99,9 +102,6 @@ function ManageBookingsPage() {
 
   async function handleDelete(bookingId) {
     try {
-      if (!window.confirm("Delete this cancelled booking permanently?")) {
-        return;
-      }
       const result = await deleteCancelledBooking(bookingId, userId, role);
       alert(result || "Cancelled booking deleted");
 

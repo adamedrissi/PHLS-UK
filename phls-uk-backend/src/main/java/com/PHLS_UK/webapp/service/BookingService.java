@@ -26,15 +26,18 @@ public class BookingService {
     private final AvailabilitySlotRepository availabilitySlotRepository;
     private final PatientProfileRepository patientProfileRepository;
     private final UserRepository userRepository;
+    private final EmailNotificationService emailNotificationService;
 
     public BookingService(BookingRepository bookingRepository,
                           AvailabilitySlotRepository availabilitySlotRepository,
                           PatientProfileRepository patientProfileRepository,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          EmailNotificationService emailNotificationService) {
         this.bookingRepository = bookingRepository;
         this.availabilitySlotRepository = availabilitySlotRepository;
         this.patientProfileRepository = patientProfileRepository;
         this.userRepository = userRepository;
+        this.emailNotificationService = emailNotificationService;
     }
 
     @Transactional
@@ -78,6 +81,24 @@ public class BookingService {
         availabilitySlotRepository.save(slot);
         Booking saved = bookingRepository.save(booking);
 
+        try {
+            if (user.getNotificationPreference() != null
+                    && user.getNotificationPreference().name().equals("EMAIL")) {
+
+                emailNotificationService.sendEmail(
+                        user.getEmail(),
+                        "PHLS-UK Booking Confirmation",
+                        "Your booking has been confirmed.\n\n"
+                                + "Provider: " + slot.getProvider().getFullName() + "\n"
+                                + "Clinic: " + slot.getClinic().getClinicName() + "\n"
+                                + "Date/Time: " + slot.getStartTime() + " to " + slot.getEndTime() + "\n"
+                                + "Price: £" + slot.getPrice()
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return new BookingResponse(
                 saved.getId(),
                 slot.getId(),
@@ -88,6 +109,7 @@ public class BookingService {
                 slot.getEndTime(),
                 buildConfirmationMessage(user, patient, slot)
         );
+
     }
 
     @Transactional(readOnly = true)
@@ -112,6 +134,26 @@ public class BookingService {
 
         availabilitySlotRepository.save(booking.getSlot());
         Booking saved = bookingRepository.save(booking);
+
+        try {
+            User patientUser = booking.getPatient().getUser();
+
+            if (patientUser.getNotificationPreference() != null
+                    && patientUser.getNotificationPreference().name().equals("EMAIL")) {
+
+                emailNotificationService.sendEmail(
+                        patientUser.getEmail(),
+                        "PHLS-UK Booking Cancelled",
+                        "Your booking has been cancelled.\n\n"
+                                + "Provider: " + booking.getProvider().getFullName() + "\n"
+                                + "Clinic: " + booking.getClinic().getClinicName() + "\n"
+                                + "Date/Time: " + booking.getSlot().getStartTime() + " to "
+                                + booking.getSlot().getEndTime()
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return new BookingResponse(
                 saved.getId(),

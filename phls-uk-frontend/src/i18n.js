@@ -1,8 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { deleteCancelledBooking } from "./services/bookingService";
 
-const enTranslation = {
+const enTranslation = { //English
   common: {
     language: "Language",
     theme: "Theme",
@@ -27,6 +26,9 @@ const enTranslation = {
     providerFaqs: "Provider FAQs",
     backToTop: "↑ Back to top",
     scrollToBottom: "↓ Scroll to Bottom",
+    menu: "Menu",
+    openNavigationMenu: "Open navigation menu",
+    closeNavigationMenu: "Close navigation menu",
   },
 
   home: {
@@ -64,6 +66,11 @@ const enTranslation = {
     clinic: "Clinic",
     selectClinic: "Select a clinic",
     loadingClinics: "Loading clinics...",
+    specialties: "Specialties",
+    loadingSpecialties: "Loading specialties...",
+    selectAtLeastOneSpecialty: "Please select at least one specialty",
+    maxThreeSpecialties: "You can select up to 3 specialties",
+    specialtyHelp: "Select between 1 and 3 specialties",
   },
 
   footer: {
@@ -214,6 +221,8 @@ const enTranslation = {
     newPasswordsDoNotMatch: "New passwords do not match.",
     passwordMinLength: "New password must be at least 8 characters long.",
     passwordChangeReady: "Password change is ready to connect to the backend.",
+    passwordUpdatedSuccessfully: "Password updated successfully.",
+    passwordChangeFailed: "Failed to change password.",
     notAvailable: "Not available",
     guest: "Guest",
   },
@@ -339,7 +348,7 @@ const enTranslation = {
   },
 };
 
-const cyTranslation = {
+const cyTranslation = { //Welsh
   common: {
     language: "Iaith",
     theme: "Thema",
@@ -364,6 +373,9 @@ const cyTranslation = {
     providerFaqs: "Cwestiynau Cyffredin Darparwyr",
     backToTop: "↑ Yn ôl i'r brig",
     scrollToBottom: "↓ Sgroliwch i'r gwaelod",
+    menu: "Dewislen",
+    openNavigationMenu: "Agor y ddewislen lywio",
+    closeNavigationMenu: "Cau'r ddewislen lywio",
   },
 
   home: {
@@ -401,6 +413,11 @@ const cyTranslation = {
     clinic: "Clinig",
     selectClinic: "Dewiswch glinig",
     loadingClinics: "Wrthi'n llwytho clinigau...",
+    specialties: "Arbenigeddau",
+    loadingSpecialties: "Wrthi'n llwytho arbenigeddau...",
+    selectAtLeastOneSpecialty: "Dewiswch o leiaf un arbenigedd",
+    maxThreeSpecialties: "Gallwch ddewis hyd at 3 arbenigeddau",
+    specialtyHelp: "Dewiswch rhwng 1 a 3 arbenigeddau",
   },
 
   footer: {
@@ -551,6 +568,8 @@ const cyTranslation = {
     newPasswordsDoNotMatch: "Nid yw'r cyfrineiriau newydd yn cyfateb.",
     passwordMinLength: "Rhaid i'r cyfrinair newydd fod o leiaf 8 nod o hyd.",
     passwordChangeReady: "Mae'r newid cyfrinair yn barod i'w gysylltu â'r backend.",
+    passwordUpdatedSuccessfully: "Cyfrinair wedi'i ddiweddaru yn llwyddiannus.",
+    passwordChangeFailed: "Methwyd newid cyfrinair.",
     notAvailable: "Ddim ar gael",
     guest: "Gwestai",
   },
@@ -676,7 +695,7 @@ const cyTranslation = {
   },
 };
 
-const esTranslation = {
+const esTranslation = { //Spanish
   common: {
     language: "Idioma",
     theme: "Apariencia",
@@ -701,6 +720,9 @@ const esTranslation = {
     providerFaqs: "Preguntas frecuentes para proveedores",
     backToTop: "↑ Volver arriba",
     scrollToBottom: "↓ Ir abajo",
+    menu: "Menú",
+    openNavigationMenu: "Abrir menú de navegación",
+    closeNavigationMenu: "Cerrar menú de navegación",
   },
 
   home: {
@@ -738,6 +760,11 @@ const esTranslation = {
     clinic: "Clínica",
     selectClinic: "Seleccionar clínica",
     loadingClinics: "Cargando clínicas...",
+    specialties: "Especialidades",
+    loadingSpecialties: "Cargando especialidades...",
+    selectAtLeastOneSpecialty: "Por favor, selecciona al menos una especialidad",
+    maxThreeSpecialties: "Puedes seleccionar hasta 3 especialidades",
+    specialtyHelp: "Selecciona entre 1 y 3 especialidades",
   },
 
   footer: {
@@ -888,6 +915,8 @@ const esTranslation = {
     newPasswordsDoNotMatch: "Las nuevas contraseñas no coinciden.",
     passwordMinLength: "La nueva contraseña debe tener al menos 8 caracteres.",
     passwordChangeReady: "El cambio de contraseña está listo para conectarse al backend.",
+    passwordUpdatedSuccessfully: "Contraseña actualizada correctamente.",
+    passwordChangeFailed: "Error al cambiar la contraseña.",
     notAvailable: "No disponible",
     guest: "Invitado",
   },
@@ -1013,7 +1042,7 @@ const esTranslation = {
   },
 };
 
-const paTranslation = {
+const paTranslation = { //Panjabi
   common: {
     language: "ਭਾਸ਼ਾ",
     theme: "ਥੀਮ",
@@ -1038,6 +1067,9 @@ const paTranslation = {
     providerFaqs: "ਸੇਵਾ ਪ੍ਰਦਾਤਾਵਾਂ ਲਈ ਆਮ ਸਵਾਲ",
     backToTop: "↑ ਉੱਪਰ ਵਾਪਸ ਜਾਓ",
     scrollToBottom: "↓ ਹੇਠਾਂ ਜਾਓ",
+    menu: "ਮੇਨੂ",
+    openNavigationMenu: "ਨੈਵੀਗੇਸ਼ਨ ਮੇਨੂ ਖੋਲ੍ਹੋ",
+    closeNavigationMenu: "ਨੈਵੀਗੇਸ਼ਨ ਮੇਨੂ ਬੰਦ ਕਰੋ",
   },
 
   home: {
@@ -1075,6 +1107,11 @@ const paTranslation = {
     clinic: "ਕਲਿਨਿਕ",
     selectClinic: "ਕਲਿਨਿਕ ਚੁਣੋ",
     loadingClinics: "ਕਲਿਨਿਕ ਲੋਡ ਕਰ ਰਹੀਆਂ ਹਨ...",
+    specialties: "ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ",
+    loadingSpecialties: "ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਲੋਡ ਕਰ ਰਹੀਆਂ ਹਨ...",
+    selectAtLeastOneSpecialty: "ਕਿਰਪਾ ਕਰਕੇ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਵਿਸ਼ੇਸ਼ਤਾ ਚੁਣੋ",
+    maxThreeSpecialties: "ਤੁਸੀਂ 3 ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ तक चुन सकते हैं",
+    specialtyHelp: "1 से 3 विशेषताएं चुनें",
   },
 
   footer: {
@@ -1225,6 +1262,8 @@ const paTranslation = {
     newPasswordsDoNotMatch: "ਨਵੇਂ ਪਾਸਵਰਡ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ।",
     passwordMinLength: "ਨਵਾਂ ਪਾਸਵਰਡ ਘੱਟੋ-ਘੱਟ 8 ਅੱਖਰਾਂ ਦਾ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ।",
     passwordChangeReady: "ਪਾਸਵਰਡ ਬਦਲਾਅ backend ਨਾਲ ਜੋੜਨ ਲਈ ਤਿਆਰ ਹੈ।",
+    passwordUpdatedSuccessfully: "ਪਾਸਵਰਡ ਕਾਮਯਾਬੀ ਨਾਲ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ।",
+    passwordChangeFailed: "ਪਾਸਵਰਡ ਬਦਲੋ ਅਸਫਲ。",
     notAvailable: "ਉਪਲਬਧ ਨਹੀਂ",
     guest: "ਮਹਿਮਾਨ",
   },
@@ -1350,7 +1389,7 @@ const paTranslation = {
   },
 };
 
-const plTranslation = {
+const plTranslation = { //Polish
   common: {
     language: "Język",
     theme: "Motyw",
@@ -1375,6 +1414,9 @@ const plTranslation = {
     providerFaqs: "FAQ dla usługodawców",
     backToTop: "↑ Wróć na górę",
     scrollToBottom: "↓ Przejdź na dół",
+    menu: "Menu",
+    openNavigationMenu: "Otwórz menu nawigacyjne",
+    closeNavigationMenu: "Zamknij menu nawigacyjne",
   },
 
   home: {
@@ -1412,6 +1454,11 @@ const plTranslation = {
     clinic: "Klinika",
     selectClinic: "Wybierz klinikę",
     loadingClinics: "Ładowanie klinik...",
+    specialties: "Specjalizacje",
+    loadingSpecialties: "Ładowanie specjalizacji...",
+    selectAtLeastOneSpecialty: "Proszę wybrać co najmniej jedną specjalizację",
+    maxThreeSpecialties: "Możesz wybrać do 3 specjalizacji",
+    specialtyHelp: "Wybierz od 1 do 3 specjalizacji",
   },
 
   footer: {
@@ -1562,6 +1609,8 @@ const plTranslation = {
     newPasswordsDoNotMatch: "Nowe hasła nie są zgodne.",
     passwordMinLength: "Nowe hasło musi mieć co najmniej 8 znaków.",
     passwordChangeReady: "Zmiana hasła jest gotowa do połączenia z backendem.",
+    passwordUpdatedSuccessfully: "Hasło zostało pomyślnie zaktualizowane.",
+    passwordChangeFailed: "Nie udało się zmienić hasła.",
     notAvailable: "Niedostępne",
     guest: "Gość",
   },
@@ -1687,7 +1736,7 @@ const plTranslation = {
   },
 };
 
-const ptTranslation = {
+const ptTranslation = { //Portuguese
   common: {
     language: "Idioma",
     theme: "Tema",
@@ -1712,6 +1761,9 @@ const ptTranslation = {
     providerFaqs: "Perguntas frequentes dos prestadores",
     backToTop: "↑ Voltar ao topo",
     scrollToBottom: "↓ Ir para o fundo",
+    menu: "Menu",
+    openNavigationMenu: "Abrir menu de navegação",
+    closeNavigationMenu: "Fechar menu de navegação",
   },
 
   home: {
@@ -1749,6 +1801,11 @@ const ptTranslation = {
     clinic: "Clínica",
     selectClinic: "Selecione a clínica",
     loadingClinics: "A carregar clínicas...",
+    specialties: "Especialidades",
+    loadingSpecialties: "Cargando especialidades...",
+    selectAtLeastOneSpecialty: "Por favor, selecione pelo menos uma especialidade",
+    maxThreeSpecialties: "Você pode selecionar até 3 especialidades",
+    specialtyHelp: "Selecione de 1 a 3 especialidades",
   },
 
   footer: {
@@ -1899,6 +1956,8 @@ const ptTranslation = {
     newPasswordsDoNotMatch: "As novas palavras-passe não coincidem.",
     passwordMinLength: "A nova palavra-passe deve ter pelo menos 8 caracteres.",
     passwordChangeReady: "A alteração da palavra-passe está pronta para ser ligada ao backend.",
+    passwordUpdatedSuccessfully: "Palavra-passe atualizada com sucesso.",
+    passwordChangeFailed: "Falha ao alterar a palavra-passe.",
     notAvailable: "Não disponível",
     guest: "Convidado",
   },
@@ -2024,7 +2083,7 @@ const ptTranslation = {
   },
 };
 
-const roTranslation = {
+const roTranslation = { //Romanian
   common: {
     language: "Limbă",
     theme: "Temă",
@@ -2049,6 +2108,9 @@ const roTranslation = {
     providerFaqs: "Întrebări frecvente pentru furnizori",
     backToTop: "↑ Înapoi sus",
     scrollToBottom: "↓ Mergi în jos",
+    menu: "Meniu",
+    openNavigationMenu: "Deschide meniul de navigare",
+    closeNavigationMenu: "Închide meniul de navigare",
   },
 
   home: {
@@ -2086,6 +2148,11 @@ const roTranslation = {
     clinic: "Clinică",
     selectClinic: "Selectează clinica",
     loadingClinics: "Se încarcă cliniciile...",
+    specialties: "Specialități",
+    loadingSpecialties: "Se încarcă specialitățile...",
+    selectAtLeastOneSpecialty: "Te rog să selectezi cel puțin o specialitate",
+    maxThreeSpecialties: "Poți selecta până la 3 specialități",
+    specialtyHelp: "Selectează între 1 și 3 specialități",
   },
 
   footer: {
@@ -2236,6 +2303,8 @@ const roTranslation = {
     newPasswordsDoNotMatch: "Noile parole nu se potrivesc.",
     passwordMinLength: "Noua parolă trebuie să aibă cel puțin 8 caractere.",
     passwordChangeReady: "Schimbarea parolei este pregătită pentru conectarea la backend.",
+    passwordUpdatedSuccessfully: "Parola a fost actualizată cu succes.",
+    passwordChangeFailed: "Nu s-a reușit schimbarea parolei.",
     notAvailable: "Indisponibil",
     guest: "Vizitator",
   },
@@ -2361,7 +2430,7 @@ const roTranslation = {
   },
 };
 
-const urTranslation = {
+const urTranslation = { //Urdu
   common: {
     language: "زبان",
     theme: "تھیم",
@@ -2386,6 +2455,9 @@ const urTranslation = {
     providerFaqs: "فراہم کنندگان کے عمومی سوالات",
     backToTop: "↑ اوپر واپس جائیں",
     scrollToBottom: "↓ نیچے جائیں",
+    menu: "مینو",
+    openNavigationMenu: "نیویگیشن مینو کھولیں",
+    closeNavigationMenu: "نیویگیشن مینو بند کریں",
   },
 
   home: {
@@ -2423,6 +2495,11 @@ const urTranslation = {
     clinic: "کلینک",
     selectClinic: "کلینک منتخب کریں",
     loadingClinics: "کلینکس لوڈ ہو رہے ہیں...",
+    specialties: "تخصصات",
+    loadingSpecialties: "تخصصات لوڈ ہو رہی ہیں...",
+    selectAtLeastOneSpecialty: "کم از کم ایک تخصص منتخب کریں",
+    maxThreeSpecialties: "آپ 3 تخصصوں تک منتخب کر سکتے ہیں",
+    specialtyHelp: "1 اور 3 تخصصوں کے درمیان منتخب کریں",
   },
 
   footer: {
@@ -2573,6 +2650,8 @@ const urTranslation = {
     newPasswordsDoNotMatch: "نئے پاس ورڈ آپس میں مماثل نہیں ہیں۔",
     passwordMinLength: "نیا پاس ورڈ کم از کم 8 حروف پر مشتمل ہونا چاہیے۔",
     passwordChangeReady: "پاس ورڈ کی تبدیلی backend سے جوڑنے کے لیے تیار ہے۔",
+    passwordUpdatedSuccessfully: "پاس ورڈ کامیابی سے اپڈیٹ ہو گیا۔",
+    passwordChangeFailed: "پاس ورڈ تبدیل کرنے میں ناکامی۔",
     notAvailable: "دستیاب نہیں",
     guest: "مہمان",
   },

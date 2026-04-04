@@ -1,5 +1,5 @@
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import logo from "../assets/logotype.png";
 import headerBg from "../assets/logoBackground2.png";
@@ -23,6 +23,8 @@ function AppShell() {
     localStorage.removeItem("phlsToken");
     localStorage.removeItem("phlsRole");
     localStorage.removeItem("phlsUserId");
+    localStorage.removeItem("phlsFullName");
+    localStorage.removeItem("phlsEmail");
     localStorage.removeItem("phlsLoggedIn");
     navigate("/");
   }
@@ -41,6 +43,16 @@ function AppShell() {
     });
   }
 
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const location = useLocation();
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [location.pathname]);
+
+  function closeMobileNav() {
+    setMobileNavOpen(false);
+  }
+
   return (
     <div className="shell">
       <header
@@ -52,10 +64,19 @@ function AppShell() {
           <div className="shell-header-left">
             <button
               type="button"
-              className="shell-scroll-btn"
+              className="shell-mobile-menu-btn"
+              onClick={() => setMobileNavOpen(true)}
+              aria-label={t("common.openNavigationMenu")}
+            >
+              ☰
+            </button>
+
+            <button
+              type="button"
+              className="shell-scroll-btn shell-desktop-only"
               onClick={scrollToFooter}
-              aria-label={t("common.scrollToBottom")}
-              title={t("common.scrollToBottom")}
+              aria-label="Scroll to footer"
+              title="Scroll to footer"
             >
               {t("common.scrollToBottom")}
             </button>
@@ -72,6 +93,57 @@ function AppShell() {
           </div>
         </div>
       </header>
+
+      {mobileNavOpen && (
+        <div className="shell-mobile-nav-overlay" onClick={closeMobileNav}>
+          <aside
+            className="shell-mobile-nav"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="shell-mobile-nav-top">
+              <h3 style={{ margin: 0 }}>{t("common.menu")}</h3>
+              <button
+                type="button"
+                className="shell-mobile-close-btn"
+                onClick={closeMobileNav}
+                aria-label={t("common.closeNavigationMenu")}
+              >
+                ✕
+              </button>
+            </div>
+
+            <nav className="shell-mobile-nav-links">
+              <MobileNavItem to="/home" label={t("common.home")} onNavigate={closeMobileNav} />
+
+              {role === "GUEST" && (
+                <>
+                  <MobileNavItem to="/searchbookings" label={t("common.searchBookings")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/searchinsurance" label={t("common.searchInsurance")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/settings" label={t("common.settings")} onNavigate={closeMobileNav} />
+                </>
+              )}
+
+              {role === "PATIENT" && (
+                <>
+                  <MobileNavItem to="/searchbookings" label={t("common.searchBookings")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/managebookings" label={t("common.manageBookings")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/searchinsurance" label={t("common.searchInsurance")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/manageprofile" label={t("common.manageProfile")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/settings" label={t("common.settings")} onNavigate={closeMobileNav} />
+                </>
+              )}
+
+              {role === "PROVIDER" && (
+                <>
+                  <MobileNavItem to="/managebookings" label={t("common.manageBookings")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/manageprofile" label={t("common.manageProfile")} onNavigate={closeMobileNav} />
+                  <MobileNavItem to="/settings" label={t("common.settings")} onNavigate={closeMobileNav} />
+                </>
+              )}
+            </nav>
+          </aside>
+        </div>
+      )}
 
       <div className="shell-body">
         <aside className="shell-sidebar card">
@@ -180,6 +252,20 @@ function NavItem({ to, label }) {
       className={({ isActive }) =>
         isActive ? "shell-nav-link active" : "shell-nav-link"
       }
+    >
+      {label}
+    </NavLink>
+  );
+}
+
+function MobileNavItem({ to, label, onNavigate }) {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        isActive ? "shell-mobile-nav-link active" : "shell-mobile-nav-link"
+      }
+      onClick={onNavigate}
     >
       {label}
     </NavLink>

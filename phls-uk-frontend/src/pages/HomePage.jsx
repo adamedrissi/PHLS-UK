@@ -20,7 +20,7 @@ function HomePage() {
           <p className="page-subtitle">{t("home.subtitle")}</p>
         </section>
 
-        <section
+        {/*<section
           className="card"
           style={{
             padding: "2rem",
@@ -49,7 +49,7 @@ function HomePage() {
               {t("home.theme")}: {theme}
             </div>
           </div>
-        </section>
+        </section>*/}
 
         <section
           className="card"

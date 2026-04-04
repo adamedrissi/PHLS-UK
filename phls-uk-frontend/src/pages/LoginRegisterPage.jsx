@@ -7,6 +7,7 @@ import {
   registerProvider,
 } from "../services/authService";
 import { getClinics } from "../services/clinicService";
+import { getSpecialties } from "../services/specialtyService";
 import logo from "../assets/logo.png";
 import panelBg from "../assets/logoBackground.png";
 import LanguageSelector from "../components/LanguageSelector";
@@ -26,6 +27,9 @@ function LoginRegisterPage() {
   const [clinics, setClinics] = useState([]);
   const [clinicsLoading, setClinicsLoading] = useState(false);
 
+  const [specialties, setSpecialties] = useState([]);
+  const [specialtiesLoading, setSpecialtiesLoading] = useState(false);
+
   const [registerForm, setRegisterForm] = useState({
     fullName: "",
     email: "",
@@ -33,6 +37,7 @@ function LoginRegisterPage() {
     confirmPassword: "",
     phoneNumber: "",
     clinicId: "",
+    specialtyIds: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -75,6 +80,37 @@ function LoginRegisterPage() {
     loadClinics();
   }, []);
 
+  useEffect(() => {
+    async function loadSpecialties() {
+      setSpecialtiesLoading(true);
+
+      try {
+        const data = await getSpecialties();
+        setSpecialties(data);
+      } catch (err) {
+        console.error("Failed to load specialties:", err);
+      } finally {
+        setSpecialtiesLoading(false);
+      }
+    }
+
+    loadSpecialties();
+  }, []);
+
+  useEffect(() => {
+    setError("");
+  }, [mode, userType]);
+
+  useEffect(() => {
+    if (userType === "PATIENT") {
+      setRegisterForm((prev) => ({
+        ...prev,
+        clinicId: "",
+        specialtyIds: [],
+      }));
+    }
+  }, [userType]);
+
   function handleGuestEntry() {
     localStorage.removeItem("phlsToken");
     localStorage.removeItem("phlsUserId");
@@ -83,6 +119,31 @@ function LoginRegisterPage() {
     localStorage.setItem("phlsRole", "GUEST");
     localStorage.setItem("phlsLoggedIn", "false");
     navigate("/home");
+  }
+
+  function handleSpecialtyChange(specialtyId) {
+    setRegisterForm((prev) => {
+      const current = prev.specialtyIds;
+
+      if (current.includes(specialtyId)) {
+        setError("");
+        return {
+          ...prev,
+          specialtyIds: current.filter((id) => id !== specialtyId),
+        };
+      }
+
+      if (current.length >= 3) {
+        setError(t("loginPage.maxThreeSpecialties"));
+        return prev;
+      }
+
+      setError("");
+      return {
+        ...prev,
+        specialtyIds: [...current, specialtyId],
+      };
+    });
   }
 
   async function handleLoginSubmit(e) {
@@ -120,11 +181,23 @@ function LoginRegisterPage() {
       return;
     }
 
-    if (userType === "PROVIDER" && !registerForm.clinicId) {
-      setError(t("loginPage.selectClinic"));
-      return;
-    }
+    if (userType === "PROVIDER") {
+      if (!registerForm.clinicId) {
+        setError(t("loginPage.selectClinic"));
+        return;
+      }
 
+      if (registerForm.specialtyIds.length < 1) {
+        setError(t("loginPage.selectAtLeastOneSpecialty"));
+        return;
+      }
+
+      if (registerForm.specialtyIds.length > 3) {
+        setError(t("loginPage.maxThreeSpecialties"));
+        return;
+      }
+    }
+    
     setLoading(true);
 
     try {
@@ -141,6 +214,7 @@ function LoginRegisterPage() {
           password: registerForm.password,
           fullName: registerForm.fullName,
           clinicId: Number(registerForm.clinicId),
+          specialtyIds: registerForm.specialtyIds,
         });
       }
 
@@ -529,6 +603,39 @@ function LoginRegisterPage() {
                       </option>
                     ))}
                   </select>
+                </div>
+              )}
+
+              {userType === "PROVIDER" && (
+                <div>
+                  <label className="form-label">{t("loginPage.specialties")}</label>
+
+                  <div className="specialty-picker">
+                    {specialtiesLoading ? (
+                      <p style={{ color: "var(--text-soft)", margin: 0 }}>
+                        {t("loginPage.loadingSpecialties")}
+                      </p>
+                    ) : (
+                      specialties.map((specialty) => {
+                        const checked = registerForm.specialtyIds.includes(specialty.id);
+
+                        return (
+                          <label key={specialty.id} className="specialty-option">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => handleSpecialtyChange(specialty.id)}
+                            />
+                            <span>{specialty.name}</span>
+                          </label>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  <p style={{ marginTop: "0.5rem", color: "var(--text-soft)", fontSize: "0.92rem" }}>
+                    {t("loginPage.specialtyHelp")} ({registerForm.specialtyIds.length}/3)
+                  </p>
                 </div>
               )}
 
